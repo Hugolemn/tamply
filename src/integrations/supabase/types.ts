@@ -14,7 +14,134 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      customers: {
+        Row: {
+          created_at: string
+          derniere_visite: string | null
+          id: string
+          numero_telephone: string
+          shop_id: string
+          total_recompenses: number
+          total_tampons: number
+        }
+        Insert: {
+          created_at?: string
+          derniere_visite?: string | null
+          id?: string
+          numero_telephone: string
+          shop_id: string
+          total_recompenses?: number
+          total_tampons?: number
+        }
+        Update: {
+          created_at?: string
+          derniere_visite?: string | null
+          id?: string
+          numero_telephone?: string
+          shop_id?: string
+          total_recompenses?: number
+          total_tampons?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customers_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shops: {
+        Row: {
+          couleur: string
+          created_at: string
+          description_recompense: string
+          id: string
+          logo_url: string | null
+          nom: string
+          owner_id: string
+          owner_nom: string | null
+          statut_abonnement: string
+          stripe_customer_id: string | null
+          tampons_requis: number
+          trial_end: string
+        }
+        Insert: {
+          couleur?: string
+          created_at?: string
+          description_recompense?: string
+          id?: string
+          logo_url?: string | null
+          nom: string
+          owner_id: string
+          owner_nom?: string | null
+          statut_abonnement?: string
+          stripe_customer_id?: string | null
+          tampons_requis?: number
+          trial_end?: string
+        }
+        Update: {
+          couleur?: string
+          created_at?: string
+          description_recompense?: string
+          id?: string
+          logo_url?: string | null
+          nom?: string
+          owner_id?: string
+          owner_nom?: string | null
+          statut_abonnement?: string
+          stripe_customer_id?: string | null
+          tampons_requis?: number
+          trial_end?: string
+        }
+        Relationships: []
+      }
+      stamp_requests: {
+        Row: {
+          created_at: string
+          customer_id: string
+          id: string
+          numero_telephone: string
+          shop_id: string
+          statut: Database["public"]["Enums"]["stamp_status"]
+          validated_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id: string
+          id?: string
+          numero_telephone: string
+          shop_id: string
+          statut?: Database["public"]["Enums"]["stamp_status"]
+          validated_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string
+          id?: string
+          numero_telephone?: string
+          shop_id?: string
+          statut?: Database["public"]["Enums"]["stamp_status"]
+          validated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stamp_requests_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stamp_requests_shop_id_fkey"
+            columns: ["shop_id"]
+            isOneToOne: false
+            referencedRelation: "shops"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +150,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      stamp_status: "en_attente" | "valide" | "refuse"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +277,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      stamp_status: ["en_attente", "valide", "refuse"],
+    },
   },
 } as const
