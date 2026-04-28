@@ -209,8 +209,20 @@ function PhoneStep({ phone, setPhone, submit, submitting }: { phone: string; set
         <Button type="submit" variant="cta" size="huge" disabled={!ok || submitting} className="w-full">
           {submitting ? "Envoi…" : "Valider"}
         </Button>
-        <p className="mt-3 text-center text-xs text-muted-foreground">
-          Ton numéro reste chez le commerçant. Il n'est jamais partagé.
+        <p className="mt-3 text-center text-xs leading-relaxed text-muted-foreground">
+          Ton numéro est conservé uniquement par le commerçant pour suivre tes tampons de fidélité.
+          Il n'est jamais revendu ni partagé. Tu peux demander sa suppression à tout moment auprès du commerçant.
+          <br />
+          En continuant, tu acceptes notre{" "}
+          <a
+            href="/confidentialite"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground"
+          >
+            politique de confidentialité
+          </a>
+          .
         </p>
       </div>
     </form>
