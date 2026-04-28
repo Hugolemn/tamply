@@ -23,8 +23,8 @@ function Landing() {
       <Hero />
       <Benefits />
       <HowItWorks />
-      <Pricing />
       <Testimonials />
+      <Pricing />
       <FinalCta />
       <Footer />
     </div>
@@ -44,8 +44,8 @@ function Header() {
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           <a href="#avantages" className="text-muted-foreground hover:text-foreground">Avantages</a>
           <Link to="/demo" className="text-muted-foreground hover:text-foreground">Démo</Link>
-          <a href="#tarifs" className="text-muted-foreground hover:text-foreground">Tarifs</a>
           <a href="#temoignages" className="text-muted-foreground hover:text-foreground">Témoignages</a>
+          <a href="#tarifs" className="text-muted-foreground hover:text-foreground">Tarifs</a>
         </nav>
         <div className="flex items-center gap-2">
           <Link to="/login" className="hidden text-sm font-semibold text-foreground/80 hover:text-foreground sm:block">
