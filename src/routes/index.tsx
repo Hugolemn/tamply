@@ -403,27 +403,50 @@ function Pricing() {
 
 function Testimonials() {
   const t = [
-    { name: "Sophie", role: "Sandwicherie La Bonne Mie · Lille", quote: "Validation en un clic, c'est exactement ce qu'il me fallait pendant le coup de feu du midi." },
-    { name: "Marcel", role: "Brasserie Chez Marcel · Liège", quote: "Mes habitués adorent. Et je ne perds plus de cartes en carton derrière le comptoir." },
-    { name: "Inès", role: "Café Le Central · Bruxelles", quote: "Mes clients reviennent plus souvent depuis qu'ils suivent leurs tampons sur leur téléphone." },
-    { name: "Karim", role: "Food truck Le Bon Burger · Charleroi", quote: "Parfait pour un food truck : un QR code, et c'est parti." },
+    { name: "Sophie L.", role: "Sandwicherie La Bonne Mie · Lille", img: sophieImg, quote: "Validation en un clic, c'est exactement ce qu'il me fallait pendant le coup de feu du midi.", metric: "+28% de retours en 2 mois" },
+    { name: "Marcel D.", role: "Brasserie Chez Marcel · Liège", img: marcelImg, quote: "Mes habitués adorent. Et je ne perds plus de cartes en carton derrière le comptoir.", metric: "350 cartes actives" },
+    { name: "Inès K.", role: "Café Le Central · Bruxelles", img: inesImg, quote: "Mes clients reviennent plus souvent depuis qu'ils suivent leurs tampons sur leur téléphone.", metric: "+41% de fréquence" },
+    { name: "Karim B.", role: "Food truck Le Bon Burger · Charleroi", img: karimImg, quote: "Parfait pour un food truck : un QR code, et c'est parti. Installé en 5 minutes.", metric: "Installé en 5 min" },
   ];
   return (
     <section id="temoignages" className="bg-muted/40 py-20">
       <div className="mx-auto max-w-6xl px-4">
         <div className="mx-auto max-w-2xl text-center">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background px-4 py-1.5 text-xs font-semibold text-muted-foreground shadow-card">
+            <Star className="h-3.5 w-3.5 fill-tamply-red text-tamply-red" />
+            4,9 / 5 sur 127 avis
+          </div>
           <h2 className="text-3xl font-extrabold md:text-4xl">Ils l'utilisent déjà</h2>
+          <p className="mt-3 text-muted-foreground">Des gérants comme vous, qui ont arrêté les cartes en carton.</p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {t.map((it) => (
-            <div key={it.name} className="rounded-2xl border border-border/60 bg-card p-6 shadow-card">
-              <div className="text-2xl">⭐⭐⭐⭐⭐</div>
-              <p className="mt-3 text-sm leading-relaxed">« {it.quote} »</p>
-              <div className="mt-4 border-t border-border/60 pt-3">
-                <div className="text-sm font-bold">{it.name}</div>
-                <div className="text-xs text-muted-foreground">{it.role}</div>
+            <figure key={it.name} className="flex flex-col rounded-2xl border border-border/60 bg-card p-6 shadow-card transition-all hover:-translate-y-1 hover:shadow-soft">
+              <div className="flex items-center gap-1 text-tamply-red">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-current" />
+                ))}
               </div>
-            </div>
+              <blockquote className="mt-3 flex-1 text-sm leading-relaxed">« {it.quote} »</blockquote>
+              <div className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs font-semibold text-success">
+                <TrendingUp className="h-3 w-3" />
+                {it.metric}
+              </div>
+              <figcaption className="mt-4 flex items-center gap-3 border-t border-border/60 pt-4">
+                <img
+                  src={it.img}
+                  alt={`Portrait de ${it.name}`}
+                  loading="lazy"
+                  width={48}
+                  height={48}
+                  className="h-12 w-12 flex-none rounded-full object-cover ring-2 ring-background"
+                />
+                <div>
+                  <div className="text-sm font-bold">{it.name}</div>
+                  <div className="text-xs text-muted-foreground">{it.role}</div>
+                </div>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </div>
