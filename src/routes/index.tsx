@@ -7,13 +7,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, MessageCircle, Star, Users, Store, TrendingUp } from "lucide-react";
+import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, MessageCircle, Store, UtensilsCrossed, Sandwich, Beer, Truck, IceCream } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { FaqChatbot } from "@/components/faq-chatbot";
-import sophieImg from "@/assets/testimonial-sophie.jpg";
-import marcelImg from "@/assets/testimonial-marcel.jpg";
-import inesImg from "@/assets/testimonial-ines.jpg";
-import karimImg from "@/assets/testimonial-karim.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,11 +45,6 @@ export const Route = createFileRoute("/")({
             priceCurrency: "EUR",
             description: "29€/mois par établissement, 30 jours d'essai gratuit",
           },
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: "4.9",
-            reviewCount: "127",
-          },
         }),
       },
       {
@@ -78,10 +69,9 @@ function Landing() {
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
-      <SocialProofBar />
       <Benefits />
       <HowItWorks />
-      <Testimonials />
+      <ForWho />
       <Pricing />
       <FinalCta />
       <Faq />
@@ -102,7 +92,7 @@ function Header() {
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           <a href="#avantages" className="text-muted-foreground hover:text-foreground">Avantages</a>
           <Link to="/demo" className="text-muted-foreground hover:text-foreground">Démo</Link>
-          <a href="#temoignages" className="text-muted-foreground hover:text-foreground">Témoignages</a>
+          <a href="#pour-qui" className="text-muted-foreground hover:text-foreground">Pour qui</a>
           <a href="#tarifs" className="text-muted-foreground hover:text-foreground">Tarifs</a>
         </nav>
         <div className="flex items-center gap-2">
@@ -401,54 +391,45 @@ function Pricing() {
   );
 }
 
-function Testimonials() {
-  const t = [
-    { name: "Sophie L.", role: "Sandwicherie La Bonne Mie · Lille", img: sophieImg, quote: "Validation en un clic, c'est exactement ce qu'il me fallait pendant le coup de feu du midi.", metric: "+28% de retours en 2 mois" },
-    { name: "Marcel D.", role: "Brasserie Chez Marcel · Liège", img: marcelImg, quote: "Mes habitués adorent. Et je ne perds plus de cartes en carton derrière le comptoir.", metric: "350 cartes actives" },
-    { name: "Inès K.", role: "Café Le Central · Bruxelles", img: inesImg, quote: "Mes clients reviennent plus souvent depuis qu'ils suivent leurs tampons sur leur téléphone.", metric: "+41% de fréquence" },
-    { name: "Karim B.", role: "Food truck Le Bon Burger · Charleroi", img: karimImg, quote: "Parfait pour un food truck : un QR code, et c'est parti. Installé en 5 minutes.", metric: "Installé en 5 min" },
+function ForWho() {
+  const trades = [
+    { icon: UtensilsCrossed, label: "Restaurants" },
+    { icon: Sandwich, label: "Sandwicheries" },
+    { icon: Beer, label: "Brasseries & bars" },
+    { icon: Coffee, label: "Cafés & salons de thé" },
+    { icon: Truck, label: "Food trucks" },
+    { icon: IceCream, label: "Glaciers & friteries" },
   ];
   return (
-    <section id="temoignages" className="bg-muted/40 py-20">
+    <section id="pour-qui" className="bg-muted/40 py-20">
       <div className="mx-auto max-w-6xl px-4">
         <div className="mx-auto max-w-2xl text-center">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background px-4 py-1.5 text-xs font-semibold text-muted-foreground shadow-card">
-            <Star className="h-3.5 w-3.5 fill-tamply-red text-tamply-red" />
-            4,9 / 5 sur 127 avis
+            <Store className="h-3.5 w-3.5 text-tamply-red" />
+            Pensé pour l'Horeca
           </div>
-          <h2 className="text-3xl font-extrabold md:text-4xl">Ils l'utilisent déjà</h2>
-          <p className="mt-3 text-muted-foreground">Des gérants comme vous, qui ont arrêté les cartes en carton.</p>
+          <h2 className="text-3xl font-extrabold md:text-4xl">Conçu pour votre métier</h2>
+          <p className="mt-3 text-muted-foreground">
+            Tamply s'adapte à tous les commerces où vos clients reviennent — du comptoir au food truck.
+          </p>
         </div>
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {t.map((it) => (
-            <figure key={it.name} className="flex flex-col rounded-2xl border border-border/60 bg-card p-6 shadow-card transition-all hover:-translate-y-1 hover:shadow-soft">
-              <div className="flex items-center gap-1 text-tamply-red">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className="h-4 w-4 fill-current" />
-                ))}
+        <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+          {trades.map((t) => (
+            <div
+              key={t.label}
+              className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card p-6 text-center shadow-card transition-all hover:-translate-y-0.5 hover:shadow-soft"
+            >
+              <div className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-cta">
+                <t.icon className="h-6 w-6 text-foreground" />
               </div>
-              <blockquote className="mt-3 flex-1 text-sm leading-relaxed">« {it.quote} »</blockquote>
-              <div className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs font-semibold text-success">
-                <TrendingUp className="h-3 w-3" />
-                {it.metric}
-              </div>
-              <figcaption className="mt-4 flex items-center gap-3 border-t border-border/60 pt-4">
-                <img
-                  src={it.img}
-                  alt={`Portrait de ${it.name}`}
-                  loading="lazy"
-                  width={48}
-                  height={48}
-                  className="h-12 w-12 flex-none rounded-full object-cover ring-2 ring-background"
-                />
-                <div>
-                  <div className="text-sm font-bold">{it.name}</div>
-                  <div className="text-xs text-muted-foreground">{it.role}</div>
-                </div>
-              </figcaption>
-            </figure>
+              <div className="text-sm font-bold">{t.label}</div>
+            </div>
           ))}
         </div>
+        <p className="mx-auto mt-10 max-w-xl text-center text-xs text-muted-foreground">
+          Vous démarrez parmi les premiers commerces à utiliser Tamply.
+          Devenez client fondateur et bénéficiez d'un accompagnement personnalisé.
+        </p>
       </div>
     </section>
   );
@@ -574,30 +555,3 @@ function StickyMobileCta() {
   );
 }
 
-function SocialProofBar() {
-  const stats = [
-    { icon: Store, value: "200+", label: "commerces actifs" },
-    { icon: Users, value: "50 000+", label: "cartes distribuées" },
-    { icon: Star, value: "4,9 / 5", label: "satisfaction client" },
-    { icon: TrendingUp, value: "+32%", label: "de retours en moyenne" },
-  ];
-  return (
-    <section aria-label="Chiffres clés" className="border-y border-border/60 bg-muted/30 py-8">
-      <div className="mx-auto max-w-6xl px-4">
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-          {stats.map((s) => (
-            <div key={s.label} className="flex items-center gap-3">
-              <div className="grid h-11 w-11 flex-none place-items-center rounded-xl bg-gradient-cta shadow-card">
-                <s.icon className="h-5 w-5 text-foreground" />
-              </div>
-              <div>
-                <div className="text-xl font-extrabold leading-none">{s.value}</div>
-                <div className="mt-1 text-xs text-muted-foreground">{s.label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
