@@ -2,6 +2,7 @@ import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tan
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { LayoutGrid, CheckCircle2, Users, QrCode, Settings, CreditCard, LogOut } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({ meta: [{ title: "Tableau de bord · Tamply" }] }),
@@ -41,7 +42,7 @@ function DashboardLayout() {
       <header className="sticky top-0 z-30 border-b border-border/60 bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
           <Link to="/dashboard" className="flex items-center gap-2">
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-cta shadow-soft">🎟️</div>
+            <img src={logo} alt="Logo Tamply" className="h-9 w-9 object-contain" />
             <span className="text-lg font-extrabold">Tamply</span>
           </Link>
           <button

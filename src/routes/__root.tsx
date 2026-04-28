@@ -2,12 +2,13 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
 import appCss from "../styles.css?url";
+import logo from "@/assets/logo.png";
 
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-hero px-4">
       <div className="max-w-md text-center">
-        <div className="text-7xl mb-4">🎟️</div>
+        <img src={logo} alt="Logo Tamply" className="mx-auto mb-4 h-20 w-20 object-contain" />
         <h1 className="text-7xl font-bold text-foreground">404</h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">Page introuvable</h2>
         <p className="mt-2 text-sm text-muted-foreground">
