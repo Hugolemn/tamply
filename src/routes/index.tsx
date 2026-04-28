@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -36,9 +37,7 @@ function Header() {
     <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link to="/" className="flex items-center gap-2">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-cta shadow-soft">
-            <span className="text-lg">🎟️</span>
-          </div>
+          <img src={logo} alt="Logo Tamply" className="h-9 w-9 object-contain" />
           <span className="text-xl font-extrabold tracking-tight">Tamply</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
@@ -360,7 +359,7 @@ function Footer() {
     <footer className="border-t border-border/60 bg-background py-10">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-sm text-muted-foreground md:flex-row">
         <div className="flex items-center gap-2">
-          <div className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-cta text-sm">🎟️</div>
+          <img src={logo} alt="Logo Tamply" className="h-7 w-7 object-contain" />
           <span className="font-bold text-foreground">Tamply</span>
           <span>· © {new Date().getFullYear()}</span>
         </div>
