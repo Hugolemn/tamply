@@ -6,8 +6,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee } from "lucide-react";
+import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, MessageCircle } from "lucide-react";
 import logo from "@/assets/logo.png";
+import { FaqChatbot } from "@/components/faq-chatbot";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -440,6 +441,22 @@ function Faq() {
             </AccordionItem>
           ))}
         </Accordion>
+
+        <div className="mt-12">
+          <div className="mb-5 text-center">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background px-4 py-1.5 text-xs font-semibold text-muted-foreground shadow-card">
+              <MessageCircle className="h-3.5 w-3.5 text-tamply-red" />
+              Une autre question ?
+            </div>
+            <h3 className="text-2xl font-extrabold md:text-3xl">
+              Discutez avec notre assistant
+            </h3>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+              Posez n'importe quelle question sur Tamply, en français, à toute heure.
+            </p>
+          </div>
+          <FaqChatbot />
+        </div>
       </div>
     </section>
   );
