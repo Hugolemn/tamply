@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
-import { Check, Smartphone, Zap, RefreshCw, Sparkles } from "lucide-react";
+import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -171,27 +171,95 @@ function Benefits() {
 
 function HowItWorks() {
   const steps = [
-    { n: 1, t: "Le client scanne", d: "Un QR code affiché à votre comptoir." },
-    { n: 2, t: "Il entre son numéro", d: "Pas de compte, pas d'app. 5 secondes." },
-    { n: 3, t: "Vous validez", d: "Un gros bouton vert sur votre mobile." },
-    { n: 4, t: "Il revient", d: "À 10 tampons : récompense automatique." },
+    { n: 1, icon: QrCode, t: "Le client scanne", d: "Un QR code à votre comptoir." },
+    { n: 2, icon: Smartphone, t: "Il entre son numéro", d: "Pas de compte, pas d'app." },
+    { n: 3, icon: CheckCircle2, t: "Vous validez", d: "Un clic sur votre mobile." },
+    { n: 4, icon: Gift, t: "Il revient", d: "Récompense à 10 tampons." },
   ];
   return (
-    <section className="bg-gradient-hero py-20">
-      <div className="mx-auto max-w-6xl px-4">
+    <section className="relative overflow-hidden bg-gradient-hero py-20">
+      <div className="absolute -left-24 top-12 h-64 w-64 rounded-full bg-primary/20 blur-3xl" />
+      <div className="absolute -right-24 bottom-12 h-64 w-64 rounded-full bg-secondary/15 blur-3xl" />
+      <div className="relative mx-auto max-w-6xl px-4">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-extrabold md:text-4xl">Comment ça marche</h2>
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-4 py-1.5 text-xs font-semibold text-muted-foreground shadow-card">
+            <Play className="h-3 w-3 fill-current text-tamply-red" />
+            Démo interactive
+          </div>
+          <h2 className="text-3xl font-extrabold md:text-4xl">Voyez Tamply en action</h2>
+          <p className="mt-3 text-muted-foreground">
+            30 secondes pour comprendre, du scan client à la récompense.
+          </p>
         </div>
-        <div className="mt-12 grid gap-4 md:grid-cols-4">
-          {steps.map((s) => (
-            <div key={s.n} className="rounded-2xl bg-card p-6 shadow-card">
-              <div className="grid h-10 w-10 place-items-center rounded-full bg-secondary text-base font-bold text-secondary-foreground">
-                {s.n}
+
+        <div className="mt-12 grid items-center gap-10 lg:grid-cols-[1.1fr_1fr]">
+          {/* Phone preview */}
+          <Link to="/demo" className="group relative mx-auto block w-full max-w-sm">
+            <div className="absolute -inset-4 rounded-[3rem] bg-gradient-to-br from-primary/30 to-secondary/20 opacity-60 blur-2xl transition-opacity group-hover:opacity-90" />
+            <div className="relative mx-auto aspect-[9/19] w-full max-w-[300px] rounded-[2.5rem] border-[8px] border-foreground/90 bg-background shadow-soft transition-transform group-hover:-translate-y-1">
+              <div className="absolute left-1/2 top-2 z-10 h-4 w-20 -translate-x-1/2 rounded-full bg-foreground/90" />
+              <div className="absolute inset-0 flex flex-col gap-3 overflow-hidden rounded-[1.8rem] bg-card p-4 pt-8">
+                <div className="text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Brasserie Chez Marcel
+                </div>
+                <div className="rounded-full bg-success/15 px-3 py-1 text-center text-[11px] font-bold text-success">
+                  +1 tampon ajouté !
+                </div>
+                <div className="grid grid-cols-5 gap-1.5">
+                  {Array.from({ length: 10 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`aspect-square grid place-items-center rounded-lg border-2 text-xs font-bold ${
+                        i < 7
+                          ? "border-primary bg-primary text-foreground shadow-soft"
+                          : "border-dashed border-border bg-muted/40"
+                      }`}
+                    >
+                      {i < 7 ? "✓" : ""}
+                    </div>
+                  ))}
+                </div>
+                <div className="text-center text-[10px] font-semibold text-muted-foreground">
+                  7 / 10 — plus que 3 !
+                </div>
               </div>
-              <h3 className="mt-4 font-bold">{s.t}</h3>
-              <p className="mt-1 text-sm text-muted-foreground">{s.d}</p>
+              {/* Play overlay */}
+              <div className="absolute inset-0 flex items-center justify-center rounded-[1.8rem] bg-foreground/0 transition-colors group-hover:bg-foreground/10">
+                <div className="grid h-16 w-16 place-items-center rounded-full bg-background/95 shadow-glow ring-2 ring-primary/40 transition-transform group-hover:scale-110">
+                  <Play className="h-7 w-7 translate-x-0.5 fill-foreground text-foreground" />
+                </div>
+              </div>
             </div>
-          ))}
+          </Link>
+
+          {/* Steps + CTA */}
+          <div>
+            <ol className="space-y-3">
+              {steps.map((s) => (
+                <li key={s.n} className="flex items-start gap-4 rounded-2xl border border-border/60 bg-card p-4 shadow-card">
+                  <div className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-gradient-cta text-sm font-bold shadow-soft">
+                    {s.n}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <s.icon className="h-4 w-4 text-secondary" />
+                      <h3 className="font-bold">{s.t}</h3>
+                    </div>
+                    <p className="mt-0.5 text-sm text-muted-foreground">{s.d}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <div className="mt-6 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+              <Link to="/demo">
+                <Button variant="cta" size="lg" className="gap-2">
+                  <Play className="h-4 w-4 fill-current" />
+                  Lancer la démo interactive
+                </Button>
+              </Link>
+              <span className="text-xs text-muted-foreground">30 secondes · sans inscription</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
