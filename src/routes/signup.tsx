@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "Inscription · Tamply" }] }),
@@ -63,7 +64,7 @@ function Signup() {
     <div className="min-h-screen bg-gradient-hero px-4 py-10">
       <div className="mx-auto max-w-md">
         <Link to="/" className="mb-8 flex items-center justify-center gap-2">
-          <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-cta shadow-soft">🎟️</div>
+          <img src={logo} alt="Logo Tamply" className="h-10 w-10 object-contain" />
           <span className="text-2xl font-extrabold">Tamply</span>
         </Link>
         <div className="rounded-3xl border border-border/60 bg-card p-7 shadow-soft">

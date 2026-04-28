@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import confetti from "canvas-confetti";
 import { Loader2, Phone } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/c/$shopId")({
   head: () => ({ meta: [{ title: "Carte de fidélité · Tamply" }] }),
@@ -166,7 +167,7 @@ function Wrapper({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-gradient-hero px-4 py-6">
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-md flex-col">
         <div className="mt-2 flex items-center justify-center gap-2 opacity-70">
-          <div className="grid h-7 w-7 place-items-center rounded-lg bg-gradient-cta text-sm">🍟</div>
+          <img src={logo} alt="Logo Tamply" className="h-7 w-7 object-contain" />
           <span className="text-sm font-extrabold">Tamply</span>
         </div>
         <div className="mt-6 flex flex-1 flex-col">{children}</div>
