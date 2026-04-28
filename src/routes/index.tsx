@@ -7,13 +7,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, MessageCircle, Star, Users, Store, TrendingUp } from "lucide-react";
+import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, MessageCircle, Store, UtensilsCrossed, Sandwich, Beer, Truck, IceCream } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { FaqChatbot } from "@/components/faq-chatbot";
-import sophieImg from "@/assets/testimonial-sophie.jpg";
-import marcelImg from "@/assets/testimonial-marcel.jpg";
-import inesImg from "@/assets/testimonial-ines.jpg";
-import karimImg from "@/assets/testimonial-karim.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -49,11 +45,6 @@ export const Route = createFileRoute("/")({
             priceCurrency: "EUR",
             description: "29€/mois par établissement, 30 jours d'essai gratuit",
           },
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: "4.9",
-            reviewCount: "127",
-          },
         }),
       },
       {
@@ -78,10 +69,9 @@ function Landing() {
     <div className="min-h-screen bg-background">
       <Header />
       <Hero />
-      <SocialProofBar />
       <Benefits />
       <HowItWorks />
-      <Testimonials />
+      <ForWho />
       <Pricing />
       <FinalCta />
       <Faq />
