@@ -290,8 +290,8 @@ function HowItWorks() {
         <div className="mt-12 grid items-center gap-10 lg:grid-cols-[1.1fr_1fr]">
           {/* Phone preview */}
           <Link to="/demo" className="group relative mx-auto block w-full max-w-sm">
-            <div className="absolute -inset-4 rounded-[3rem] bg-gradient-to-br from-primary/30 to-secondary/20 opacity-60 blur-2xl transition-opacity group-hover:opacity-90" />
-            <div className="relative mx-auto aspect-[9/19] w-full max-w-[300px] rounded-[2.5rem] border-[8px] border-foreground/90 bg-background shadow-soft transition-transform group-hover:-translate-y-1">
+            <div className="demo-phone-glow absolute -inset-5 rounded-[3rem] transition-all duration-500 group-hover:scale-[1.03] group-hover:opacity-100" />
+            <div className="demo-phone-shell relative mx-auto aspect-[9/19] w-full max-w-[300px] rounded-[2.5rem] border-[8px] border-foreground/90 bg-background shadow-soft transition-transform duration-500 group-hover:-translate-y-1">
               <div className="absolute left-1/2 top-2 z-10 h-4 w-20 -translate-x-1/2 rounded-full bg-foreground/90" />
               <div className="absolute inset-0 flex flex-col gap-3 overflow-hidden rounded-[1.8rem] bg-card p-4 pt-8">
                 <div className="text-center text-xs font-semibold uppercase tracking-wider text-muted-foreground">
