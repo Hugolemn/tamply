@@ -158,23 +158,34 @@ function Hero() {
 function HeroVisual() {
   const [stamps, setStamps] = useState(0);
   const [pulse, setPulse] = useState(false);
+  const [justStamped, setJustStamped] = useState<number | null>(null);
   useEffect(() => {
-    const id = setInterval(() => {
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setStamps(7);
+      return;
+    }
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const tick = () => {
       setStamps((prev) => {
         const next = prev >= 7 ? 0 : prev + 1;
         if (next > 0) {
           setPulse(true);
-          setTimeout(() => setPulse(false), 400);
+          setJustStamped(next - 1);
+          setTimeout(() => setPulse(false), 600);
+          setTimeout(() => setJustStamped(null), 700);
         }
+        // Pause longer when card is full before reset
+        timeoutId = setTimeout(tick, next === 7 ? 2200 : 1100);
         return next;
       });
-    }, 900);
-    return () => clearInterval(id);
+    };
+    timeoutId = setTimeout(tick, 600);
+    return () => clearTimeout(timeoutId);
   }, []);
   return (
     <div className="relative mx-auto mt-14 max-w-md">
       <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-primary/30 via-secondary/20 to-transparent blur-2xl" />
-      <div className="relative rounded-3xl border border-border/60 bg-card p-6 shadow-soft">
+      <div className="relative rounded-3xl border border-border/60 bg-card p-6 shadow-soft" style={{ transform: "translateZ(0)" }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-cta">🎟️</div>
@@ -184,9 +195,10 @@ function HeroVisual() {
             </div>
           </div>
           <span
-            className={`rounded-full px-2 py-1 text-xs font-semibold text-success transition-all duration-300 ${
-              pulse ? "scale-110 bg-success/25" : "scale-100 bg-success/10"
+            className={`rounded-full px-2 py-1 text-xs font-semibold text-success bg-success/10 transition-[transform,background-color] duration-500 ease-out ${
+              pulse ? "scale-110 !bg-success/25" : "scale-100"
             }`}
+            style={{ willChange: "transform" }}
           >
             +1 tampon
           </span>
@@ -195,13 +207,21 @@ function HeroVisual() {
           {Array.from({ length: 10 }).map((_, i) => (
             <div
               key={i}
-              className={`aspect-square rounded-xl border-2 grid place-items-center text-lg transition-all duration-500 ${
+              className={`aspect-square rounded-xl border-2 grid place-items-center text-lg transition-[background-color,border-color,transform,box-shadow] duration-[600ms] ${
                 i < stamps
-                  ? "border-solid border-primary bg-primary shadow-soft scale-100"
-                  : "border-dashed border-border bg-muted/40 scale-95"
-              }`}
+                  ? "border-solid border-primary bg-primary shadow-soft"
+                  : "border-dashed border-border bg-muted/40"
+              } ${justStamped === i ? "scale-110" : "scale-100"}`}
+              style={{
+                transitionTimingFunction: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+                willChange: justStamped === i ? "transform" : "auto",
+              }}
             >
-              {i < stamps ? "✓" : ""}
+              <span
+                className={`transition-opacity duration-500 ${i < stamps ? "opacity-100" : "opacity-0"}`}
+              >
+                ✓
+              </span>
             </div>
           ))}
         </div>
