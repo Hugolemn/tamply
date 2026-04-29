@@ -164,23 +164,31 @@ function HeroVisual() {
       setStamps(7);
       return;
     }
-    let timeoutId: ReturnType<typeof setTimeout>;
+    let cancelled = false;
+    let current = 0;
+    const pulseTimeouts: ReturnType<typeof setTimeout>[] = [];
+    let nextTimeout: ReturnType<typeof setTimeout>;
+
     const tick = () => {
-      setStamps((prev) => {
-        const next = prev >= 7 ? 0 : prev + 1;
-        if (next > 0) {
-          setPulse(true);
-          setJustStamped(next - 1);
-          setTimeout(() => setPulse(false), 600);
-          setTimeout(() => setJustStamped(null), 700);
-        }
-        // Pause longer when card is full before reset
-        timeoutId = setTimeout(tick, next === 7 ? 2200 : 1100);
-        return next;
-      });
+      if (cancelled) return;
+      const next = current >= 7 ? 0 : current + 1;
+      current = next;
+      setStamps(next);
+      if (next > 0) {
+        setPulse(true);
+        setJustStamped(next - 1);
+        pulseTimeouts.push(setTimeout(() => !cancelled && setPulse(false), 600));
+        pulseTimeouts.push(setTimeout(() => !cancelled && setJustStamped(null), 700));
+      }
+      nextTimeout = setTimeout(tick, next === 7 ? 2200 : 1100);
     };
-    timeoutId = setTimeout(tick, 600);
-    return () => clearTimeout(timeoutId);
+
+    nextTimeout = setTimeout(tick, 600);
+    return () => {
+      cancelled = true;
+      clearTimeout(nextTimeout);
+      pulseTimeouts.forEach(clearTimeout);
+    };
   }, []);
   return (
     <div className="relative mx-auto mt-14 max-w-md">
