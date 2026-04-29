@@ -22,20 +22,20 @@ import { useRevealOnScroll } from "@/hooks/use-reveal-on-scroll";
 export const Route = createFileRoute("/tarifs")({
   head: () => ({
     meta: [
-      { title: "Tarifs Tamply — 29€/mois, 30 jours d'essai gratuit" },
+      { title: "Tarifs Tamply — 24,99€/mois, 30 jours d'essai gratuit" },
       {
         name: "description",
         content:
-          "Un seul tarif simple : 29€/mois par établissement, sans engagement. 30 jours d'essai gratuit, sans carte bancaire. Clients illimités, support en français.",
+          "Un seul tarif simple : 24,99€/mois par établissement, sans engagement. 30 jours d'essai gratuit, sans carte bancaire. Clients illimités, support en français.",
       },
-      { property: "og:title", content: "Tarifs Tamply — 29€/mois, 30 jours d'essai gratuit" },
+      { property: "og:title", content: "Tarifs Tamply — 24,99€/mois, 30 jours d'essai gratuit" },
       {
         property: "og:description",
         content:
           "Un seul tarif simple, sans engagement. Essai 30 jours sans carte bancaire.",
       },
       { property: "og:url", content: "https://tamply.app/tarifs" },
-      { name: "twitter:title", content: "Tarifs Tamply — 29€/mois" },
+      { name: "twitter:title", content: "Tarifs Tamply — 24,99€/mois" },
       {
         name: "twitter:description",
         content: "30 jours d'essai gratuit, sans carte bancaire. Sans engagement.",
@@ -58,11 +58,11 @@ export const Route = createFileRoute("/tarifs")({
           brand: { "@type": "Brand", name: "Tamply" },
           offers: {
             "@type": "Offer",
-            price: "29",
+            price: "24.99",
             priceCurrency: "EUR",
             availability: "https://schema.org/InStock",
             description:
-              "29€/mois par établissement, 30 jours d'essai gratuit sans carte bancaire",
+              "24,99€/mois par établissement, 30 jours d'essai gratuit sans carte bancaire",
           },
         }),
       },
@@ -168,7 +168,7 @@ function PricingCard() {
             Tamply Pro
           </div>
           <div className="mt-4 flex items-baseline gap-1">
-            <span className="text-5xl font-extrabold">29€</span>
+            <span className="text-5xl font-extrabold">24,99€</span>
             <span className="text-muted-foreground">/mois</span>
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
@@ -269,7 +269,7 @@ function PriceFaq() {
     },
     {
       q: "Le tarif inclut-il la TVA ?",
-      a: "Le prix de 29€/mois est hors TVA. La TVA applicable selon votre pays (Belgique ou France) est ajoutée sur la facture.",
+      a: "Le prix de 24,99€/mois est hors TVA. La TVA applicable selon votre pays (Belgique ou France) est ajoutée sur la facture.",
     },
     {
       q: "Puis-je annuler à tout moment ?",
@@ -277,7 +277,7 @@ function PriceFaq() {
     },
     {
       q: "Que se passe-t-il si je dépasse un certain nombre de clients ?",
-      a: "Rien. Tamply n'a aucune limite de clients ni de tampons. Le tarif reste 29€/mois, que vous ayez 10 ou 10 000 clients.",
+      a: "Rien. Tamply n'a aucune limite de clients ni de tampons. Le tarif reste 24,99€/mois, que vous ayez 10 ou 10 000 clients.",
     },
     {
       q: "Y a-t-il des frais cachés (commission, SMS, setup) ?",
@@ -285,7 +285,7 @@ function PriceFaq() {
     },
     {
       q: "J'ai plusieurs établissements, est-ce que vous proposez un tarif dégressif ?",
-      a: "Le tarif est de 29€/mois par établissement. À partir de 3 points de vente, contactez-nous pour discuter d'un tarif adapté.",
+      a: "Le tarif est de 24,99€/mois par établissement. À partir de 3 points de vente, contactez-nous pour discuter d'un tarif adapté.",
     },
     {
       q: "Quels modes de paiement acceptez-vous ?",
