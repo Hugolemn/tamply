@@ -29,7 +29,7 @@ export const Route = createFileRoute("/dashboard/settings")({
 
 function Settings() {
   const { shop, refresh } = useShop();
-  const [form, setForm] = useState({ nom: "", description_recompense: "", tampons_requis: 10, couleur: "#FFD700", logo_url: "" });
+  const [form, setForm] = useState({ nom: "", description_recompense: "", tampons_requis: 10, couleur: "#FFD700", logo_url: "", stamp_emoji: "🍟" });
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -99,6 +99,7 @@ function Settings() {
       tampons_requis: shop.tampons_requis,
       couleur: shop.couleur,
       logo_url: shop.logo_url ?? "",
+      stamp_emoji: (shop as any).stamp_emoji ?? "🍟",
     });
   }, [shop]);
 
@@ -111,6 +112,7 @@ function Settings() {
       tampons_requis: Math.max(3, Math.min(50, form.tampons_requis)),
       couleur: form.couleur,
       logo_url: form.logo_url.trim() || null,
+      stamp_emoji: form.stamp_emoji || "🍟",
     }).eq("id", shop.id);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
@@ -203,6 +205,37 @@ function Settings() {
         <div>
           <Label className="mb-1.5 block text-sm font-semibold">Tampons requis (3 à 50)</Label>
           <Input type="number" min={3} max={50} value={form.tampons_requis} onChange={(e) => setForm({ ...form, tampons_requis: Number(e.target.value) })} className="h-11 rounded-xl" />
+        </div>
+        <div>
+          <Label className="mb-1.5 block text-sm font-semibold">Emoji du tampon</Label>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Cet emoji s'affichera dans la carte de fidélité que voient vos clients.
+          </p>
+          <div className="flex items-center gap-3">
+            <div className="grid h-14 w-14 place-items-center rounded-xl border-2 border-primary bg-primary/10 text-3xl">
+              {form.stamp_emoji || "🍟"}
+            </div>
+            <Input
+              value={form.stamp_emoji}
+              onChange={(e) => setForm({ ...form, stamp_emoji: e.target.value.slice(0, 4) })}
+              placeholder="🍟"
+              className="h-11 w-24 rounded-xl text-center text-2xl"
+            />
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {["🍟","☕","🍕","🍔","🥐","🍩","🍰","🍦","🍺","🍷","🥗","🌮","🍣","🥪","🍪","💇","💅","✂️","🌸","⭐","❤️","🎁","🛍️","📚"].map((e) => (
+              <button
+                key={e}
+                type="button"
+                onClick={() => setForm({ ...form, stamp_emoji: e })}
+                className={`grid h-10 w-10 place-items-center rounded-lg border text-xl transition hover:scale-110 ${
+                  form.stamp_emoji === e ? "border-primary bg-primary/10" : "border-border bg-muted/30"
+                }`}
+              >
+                {e}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
