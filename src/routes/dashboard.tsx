@@ -31,7 +31,13 @@ function DashboardLayout() {
   if (loading || !user) {
     return (
       <div className="grid min-h-screen place-items-center bg-background">
-        <div className="text-muted-foreground">Chargement…</div>
+        <div className="flex flex-col items-center gap-3">
+          <div className="relative h-12 w-12">
+            <div className="absolute inset-0 animate-ping rounded-full bg-primary/30" />
+            <img src={logo} alt="Tamply" className="absolute inset-0 m-auto h-10 w-10 object-contain" />
+          </div>
+          <div className="text-sm font-semibold text-muted-foreground">Chargement…</div>
+        </div>
       </div>
     );
   }
