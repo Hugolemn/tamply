@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useShop } from "@/lib/use-shop";
 import { Button } from "@/components/ui/button";
-import { Check, X, Inbox, Volume2, VolumeX, Sparkles } from "lucide-react";
+import { Check, X, Inbox, Volume2, VolumeX, Sparkles, Bell, BellOff } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -25,34 +25,106 @@ function Validation() {
   const [loading, setLoading] = useState(true);
   const [newIds, setNewIds] = useState<Set<string>>(new Set());
   const [soundOn, setSoundOn] = useState(true);
+  const [notifOn, setNotifOn] = useState(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const knownIds = useRef<Set<string>>(new Set());
   const soundRef = useRef(true);
+  const notifRef = useRef(false);
+  const titleBlinkRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const originalTitleRef = useRef<string>("");
 
   // Charger préférence son
   useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = localStorage.getItem("tamply-sound");
     if (stored === "off") { setSoundOn(false); soundRef.current = false; }
+    const notifStored = localStorage.getItem("tamply-notif");
+    if (notifStored === "on" && typeof Notification !== "undefined" && Notification.permission === "granted") {
+      setNotifOn(true);
+      notifRef.current = true;
+    }
+    originalTitleRef.current = document.title;
   }, []);
   useEffect(() => { soundRef.current = soundOn; }, [soundOn]);
+  useEffect(() => { notifRef.current = notifOn; }, [notifOn]);
 
-  // Sound on new request
+  // Double bip sur nouvelle demande (plus reconnaissable)
   const beep = () => {
     if (!soundRef.current) return;
     try {
       if (typeof window === "undefined") return;
       audioCtxRef.current ||= new (window.AudioContext || (window as any).webkitAudioContext)();
       const ctx = audioCtxRef.current!;
-      const o = ctx.createOscillator(); const g = ctx.createGain();
-      o.type = "sine"; o.frequency.value = 880;
-      g.gain.setValueAtTime(0.0001, ctx.currentTime);
-      g.gain.exponentialRampToValueAtTime(0.25, ctx.currentTime + 0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
-      o.connect(g).connect(ctx.destination);
-      o.start(); o.stop(ctx.currentTime + 0.4);
+      const playTone = (freq: number, startOffset: number, duration: number) => {
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.value = freq;
+        const start = ctx.currentTime + startOffset;
+        g.gain.setValueAtTime(0.0001, start);
+        g.gain.exponentialRampToValueAtTime(0.3, start + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+        o.connect(g).connect(ctx.destination);
+        o.start(start);
+        o.stop(start + duration + 0.05);
+      };
+      // Ding-dong : note haute puis légèrement plus haute
+      playTone(880, 0, 0.18);
+      playTone(1175, 0.18, 0.28);
+    } catch {}
+    // Vibration sur mobile (si autorisée)
+    try {
+      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+        navigator.vibrate([120, 60, 180]);
+      }
     } catch {}
   };
+
+  // Notification système (fonctionne même si l'onglet est en arrière-plan)
+  const showSystemNotif = (phone: string) => {
+    if (!notifRef.current) return;
+    try {
+      if (typeof Notification === "undefined" || Notification.permission !== "granted") return;
+      const n = new Notification("🔔 Nouveau tampon à valider", {
+        body: `Client : ${phone}`,
+        tag: "tamply-pending",
+        icon: "/favicon.png",
+        badge: "/favicon.png",
+      });
+      n.onclick = () => { window.focus(); n.close(); };
+      setTimeout(() => n.close(), 8000);
+    } catch {}
+  };
+
+  // Faire clignoter le titre tant qu'il y a des demandes en attente
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const baseTitle = originalTitleRef.current || document.title;
+    if (titleBlinkRef.current) {
+      clearInterval(titleBlinkRef.current);
+      titleBlinkRef.current = null;
+    }
+    if (requests.length > 0) {
+      let toggle = false;
+      const update = () => {
+        toggle = !toggle;
+        document.title = toggle
+          ? `(${requests.length}) 🔔 Tampon à valider`
+          : `(${requests.length}) Tampons en attente`;
+      };
+      update();
+      titleBlinkRef.current = setInterval(update, 1200);
+    } else {
+      document.title = baseTitle;
+    }
+    return () => {
+      if (titleBlinkRef.current) {
+        clearInterval(titleBlinkRef.current);
+        titleBlinkRef.current = null;
+      }
+      document.title = baseTitle;
+    };
+  }, [requests.length]);
 
   const markNew = (id: string) => {
     setNewIds((prev) => {
@@ -76,6 +148,29 @@ function Validation() {
       try { localStorage.setItem("tamply-sound", next ? "on" : "off"); } catch {}
       return next;
     });
+  };
+
+  const toggleNotif = async () => {
+    if (typeof Notification === "undefined") {
+      toast.error("Votre navigateur ne supporte pas les notifications.");
+      return;
+    }
+    if (notifOn) {
+      setNotifOn(false);
+      try { localStorage.setItem("tamply-notif", "off"); } catch {}
+      return;
+    }
+    let perm = Notification.permission;
+    if (perm === "default") {
+      perm = await Notification.requestPermission();
+    }
+    if (perm !== "granted") {
+      toast.error("Autorisez les notifications dans votre navigateur pour activer cette option.");
+      return;
+    }
+    setNotifOn(true);
+    try { localStorage.setItem("tamply-notif", "on"); } catch {}
+    toast.success("Notifications activées ✓");
   };
 
   useEffect(() => {
@@ -108,6 +203,7 @@ function Validation() {
               setRequests((r) => [...r, row]);
               markNew(row.id);
               beep();
+              showSystemNotif(row.numero_telephone);
             }
           } else {
             // UPDATE/DELETE: re-filter pending list
@@ -135,20 +231,39 @@ function Validation() {
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-extrabold">Tampons à valider</h1>
+          <h1 className="text-2xl font-extrabold">
+            Tampons à valider
+            {requests.length > 0 && (
+              <span className="ml-2 inline-flex items-center justify-center rounded-full bg-secondary px-2.5 py-0.5 text-sm font-extrabold text-secondary-foreground align-middle">
+                {requests.length}
+              </span>
+            )}
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Mises à jour en temps réel · {soundOn ? "Notification sonore activée" : "Notification sonore coupée"}
+            Mises à jour en temps réel
           </p>
         </div>
-        <button
-          type="button"
-          onClick={toggleSound}
-          aria-label={soundOn ? "Couper le son" : "Activer le son"}
-          className="flex flex-none items-center gap-1.5 rounded-xl border border-border/60 bg-card px-3 py-2 text-xs font-semibold text-muted-foreground shadow-card hover:text-foreground"
-        >
-          {soundOn ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
-          <span className="hidden sm:inline">{soundOn ? "Son activé" : "Son coupé"}</span>
-        </button>
+        <div className="flex flex-none items-center gap-2">
+          <button
+            type="button"
+            onClick={toggleNotif}
+            aria-label={notifOn ? "Couper les notifications" : "Activer les notifications"}
+            title={notifOn ? "Notifications activées" : "Activer les notifications système"}
+            className="flex items-center gap-1.5 rounded-xl border border-border/60 bg-card px-3 py-2 text-xs font-semibold text-muted-foreground shadow-card hover:text-foreground"
+          >
+            {notifOn ? <Bell className="h-4 w-4 text-secondary" /> : <BellOff className="h-4 w-4" />}
+            <span className="hidden sm:inline">{notifOn ? "Notif activées" : "Notif coupées"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={toggleSound}
+            aria-label={soundOn ? "Couper le son" : "Activer le son"}
+            className="flex items-center gap-1.5 rounded-xl border border-border/60 bg-card px-3 py-2 text-xs font-semibold text-muted-foreground shadow-card hover:text-foreground"
+          >
+            {soundOn ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+            <span className="hidden sm:inline">{soundOn ? "Son activé" : "Son coupé"}</span>
+          </button>
+        </div>
       </div>
 
       {loading ? (
