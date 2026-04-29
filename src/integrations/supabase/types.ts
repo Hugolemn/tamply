@@ -52,6 +52,33 @@ export type Database = {
           },
         ]
       }
+      faq_questions: {
+        Row: {
+          ai_answer: string | null
+          created_at: string
+          email: string | null
+          id: string
+          page: string
+          question: string
+        }
+        Insert: {
+          ai_answer?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          page?: string
+          question: string
+        }
+        Update: {
+          ai_answer?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          page?: string
+          question?: string
+        }
+        Relationships: []
+      }
       shops: {
         Row: {
           couleur: string

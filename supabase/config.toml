@@ -2,3 +2,6 @@ project_id = "rymguqtoqbxlsaauraxq"
 
 [functions.faq-chat]
 verify_jwt = false
+
+[functions.faq-free-question]
+verify_jwt = false

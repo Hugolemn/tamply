@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { useRevealOnScroll } from "@/hooks/use-reveal-on-scroll";
+import { FreeQuestion } from "@/components/free-question";
 
 export const Route = createFileRoute("/tarifs")({
   head: () => ({
@@ -322,6 +323,10 @@ function PriceFaq() {
             </AccordionItem>
           ))}
         </Accordion>
+
+        <div className="mt-10">
+          <FreeQuestion />
+        </div>
       </div>
     </section>
   );
