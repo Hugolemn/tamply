@@ -374,7 +374,9 @@ function Pricing() {
     <section id="tarifs" className="py-20">
       <div className="mx-auto max-w-6xl px-4 reveal">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-extrabold md:text-4xl">Un seul tarif, simple.</h2>
+          <h2 className="text-3xl font-extrabold md:text-4xl">
+            Fidélisez vos clients <span className="bg-gradient-to-r from-[#E63946] to-[#FFB800] bg-clip-text text-transparent">sans exploser votre budget</span>
+          </h2>
           <p className="mt-3 text-muted-foreground">Sans engagement. Annulable à tout moment.</p>
         </div>
         <div className="mx-auto mt-10 max-w-lg">
