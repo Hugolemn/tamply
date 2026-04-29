@@ -61,15 +61,35 @@ function CgvPage() {
 
         <Section title="5. Tarifs et abonnement">
           <p>
-            Les tarifs en vigueur sont affichés sur la page d'accueil et dans l'espace abonnement. Ils sont indiqués en
-            euros, [À COMPLÉTER — TTC / HT selon régime].
+            Tamply est proposé au tarif de <strong>24,99 € hors TVA par mois et par établissement</strong>. La TVA
+            applicable selon le pays de l'utilisateur (Belgique, France ou autre) est ajoutée sur la facture. Les tarifs
+            en vigueur sont affichés sur la page <Link to="/tarifs" className="text-primary underline">Tarifs</Link> et
+            dans l'espace abonnement de l'utilisateur.
           </p>
           <p className="mt-3">
-            <strong>Modes de paiement acceptés :</strong> [À COMPLÉTER — carte bancaire via Stripe, prélèvement SEPA…]
+            <strong>Période d'essai gratuite :</strong> chaque nouveau compte bénéficie d'un essai gratuit de 30 jours,
+            <strong> sans carte bancaire requise</strong>. Aucun prélèvement n'est effectué pendant cette période.
+            À l'issue de l'essai, l'accès aux fonctionnalités est suspendu sauf souscription expresse à l'abonnement
+            payant par l'utilisateur.
           </p>
           <p className="mt-3">
-            L'abonnement est renouvelé automatiquement à échéance, sauf résiliation par l'utilisateur depuis son espace
-            personnel.
+            <strong>Souscription à l'abonnement et consentement au prélèvement automatique :</strong> en souscrivant à
+            l'abonnement payant, l'utilisateur accepte expressément que son moyen de paiement (carte bancaire) soit
+            <strong> prélevé automatiquement chaque mois</strong> du montant de 24,99 € HT (plus TVA applicable),
+            jusqu'à résiliation de sa part. Ce consentement est recueilli au moyen d'une case à cocher dédiée lors du
+            processus de souscription, distincte de l'acceptation des présentes CGV.
+          </p>
+          <p className="mt-3">
+            <strong>Modes de paiement acceptés :</strong> carte bancaire (Visa, Mastercard, Bancontact) via le
+            prestataire de paiement sécurisé Stripe. Aucune donnée bancaire n'est stockée sur les serveurs de Tamply.
+          </p>
+          <p className="mt-3">
+            <strong>Facturation :</strong> chaque prélèvement donne lieu à l'émission d'une facture téléchargeable
+            depuis l'espace personnel de l'utilisateur, conforme aux exigences comptables belges et françaises.
+          </p>
+          <p className="mt-3">
+            En cas d'échec d'un prélèvement (carte expirée, fonds insuffisants, etc.), l'utilisateur est notifié par
+            email. Le service peut être suspendu si le paiement n'est pas régularisé dans un délai de 7 jours.
           </p>
         </Section>
 
@@ -80,13 +100,30 @@ function CgvPage() {
             14 jours s'applique à compter de la souscription, sauf renoncement exprès en cas d'exécution immédiate du
             service.
           </p>
+          <p className="mt-3">
+            La période d'essai gratuite de 30 jours étant proposée sans engagement et sans carte bancaire, la question
+            de la rétractation ne se pose qu'à compter de la souscription effective à l'abonnement payant.
+          </p>
         </Section>
 
         <Section title="7. Résiliation">
           <p>
-            L'utilisateur peut résilier son abonnement à tout moment depuis son espace personnel. La résiliation prend
-            effet à la fin de la période en cours, sans remboursement au prorata, sauf disposition contraire mentionnée
-            sur l'offre souscrite.
+            <strong>Politique de non-remboursement — Clause essentielle :</strong> l'utilisateur reconnaît et accepte
+            expressément que <strong>tout mois d'abonnement entamé est dû dans son intégralité et n'est pas
+            remboursable</strong>, en tout ou partie, quelle que soit la date de résiliation au cours du mois et quel
+            que soit l'usage effectif fait du service durant cette période. Cette règle s'applique également en cas de
+            non-utilisation du service par l'utilisateur.
+          </p>
+          <p>
+            L'utilisateur peut résilier son abonnement <strong>à tout moment et sans frais</strong> depuis son espace
+            personnel, en un clic. La résiliation prend effet <strong>à la fin de la période mensuelle en cours déjà
+            payée</strong>. L'utilisateur conserve l'accès complet au service jusqu'à cette échéance, après quoi aucun
+            nouveau prélèvement ne sera effectué et le compte basculera en mode lecture seule.
+          </p>
+          <p className="mt-3">
+            Exemple : un utilisateur ayant été prélevé le 5 du mois et résiliant son abonnement le 20 du même mois
+            conservera l'accès jusqu'au 4 du mois suivant. Aucun remboursement, même partiel, ne pourra être réclamé
+            pour la période non utilisée entre le 20 et le 4 du mois suivant.
           </p>
           <p className="mt-3">
             L'éditeur se réserve le droit de suspendre ou résilier un compte en cas de manquement aux présentes CGV,
