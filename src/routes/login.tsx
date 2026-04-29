@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/auth-context";
 import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/login")({
@@ -20,17 +21,36 @@ export const Route = createFileRoute("/login")({
 
 function Login() {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  // If already signed in, send the user to the dashboard
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [authLoading, user, navigate]);
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!email.trim() || !password) {
+      toast.error("Email et mot de passe requis.");
+      return;
+    }
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setLoading(false);
     if (error) {
-      toast.error("Email ou mot de passe incorrect.");
+      const msg = error.message.toLowerCase();
+      if (msg.includes("email not confirmed") || msg.includes("not confirmed")) {
+        toast.error("Email non confirmé. Vérifiez votre boîte mail.");
+      } else if (msg.includes("invalid login") || msg.includes("invalid_credentials")) {
+        toast.error("Email ou mot de passe incorrect.");
+      } else {
+        toast.error(error.message);
+      }
       return;
     }
     toast.success("Bon retour 👋");
@@ -50,7 +70,15 @@ function Login() {
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <div>
               <Label className="mb-1.5 block text-sm font-semibold">Email</Label>
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-11 rounded-xl" required />
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="h-11 rounded-xl"
+                autoComplete="email"
+                autoFocus
+                required
+              />
             </div>
             <div>
               <div className="mb-1.5 flex items-center justify-between">
@@ -59,7 +87,14 @@ function Login() {
                   Oublié ?
                 </Link>
               </div>
-              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-11 rounded-xl" required />
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="h-11 rounded-xl"
+                autoComplete="current-password"
+                required
+              />
             </div>
             <Button type="submit" variant="cta" size="xl" disabled={loading} className="mt-2 w-full">
               {loading ? "Connexion…" : "Se connecter"}
