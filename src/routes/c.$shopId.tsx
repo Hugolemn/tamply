@@ -307,7 +307,7 @@ function RewardStep({ shop, restart }: { shop: Shop; restart: () => void }) {
         <div className="text-4xl">🎁</div>
         <div className="mt-3 text-2xl font-extrabold">{shop.description_recompense}</div>
       </div>
-      <div className="mt-6 rounded-2xl border-2 border-dashed border-secondary bg-card p-4 text-sm font-semibold">
+      <div className="mt-6 rounded-2xl border-2 border-dashed border-primary bg-card p-4 text-sm font-semibold">
         Montre cet écran au gérant pour récupérer ta récompense ✨
       </div>
       <div className="mt-auto pt-6">
