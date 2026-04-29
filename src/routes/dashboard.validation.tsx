@@ -30,6 +30,7 @@ function Validation() {
   const knownIds = useRef<Set<string>>(new Set());
   const soundRef = useRef(true);
   const notifRef = useRef(false);
+  const vibrationRef = useRef(true);
   const titleBlinkRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const originalTitleRef = useRef<string>("");
 
@@ -38,6 +39,8 @@ function Validation() {
     if (typeof window === "undefined") return;
     const stored = localStorage.getItem("tamply-sound");
     if (stored === "off") { setSoundOn(false); soundRef.current = false; }
+    const vib = localStorage.getItem("tamply-vibration");
+    if (vib === "off") { vibrationRef.current = false; }
     const notifStored = localStorage.getItem("tamply-notif");
     if (notifStored === "on" && typeof Notification !== "undefined" && Notification.permission === "granted") {
       setNotifOn(true);
@@ -74,7 +77,7 @@ function Validation() {
     } catch {}
     // Vibration sur mobile (si autorisée)
     try {
-      if (typeof navigator !== "undefined" && "vibrate" in navigator) {
+      if (vibrationRef.current && typeof navigator !== "undefined" && "vibrate" in navigator) {
         navigator.vibrate([120, 60, 180]);
       }
     } catch {}

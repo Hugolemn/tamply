@@ -20,7 +20,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Download, Trash2 } from "lucide-react";
+import { Download, Trash2, Volume2, Bell, Vibrate } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 export const Route = createFileRoute("/dashboard/settings")({
   component: Settings,
@@ -35,6 +36,61 @@ function Settings() {
   const [confirmText, setConfirmText] = useState("");
   const navigate = useNavigate();
   const deleteAccountFn = useServerFn(deleteMyAccount);
+
+  // Préférences notifications (partagées avec /dashboard/validation via localStorage)
+  const [soundOn, setSoundOn] = useState(true);
+  const [vibrationOn, setVibrationOn] = useState(true);
+  const [notifOn, setNotifOn] = useState(false);
+  const [notifSupported, setNotifSupported] = useState(true);
+  const [vibrationSupported, setVibrationSupported] = useState(true);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    setSoundOn(localStorage.getItem("tamply-sound") !== "off");
+    setVibrationOn(localStorage.getItem("tamply-vibration") !== "off");
+    setVibrationSupported(typeof navigator !== "undefined" && "vibrate" in navigator);
+    if (typeof Notification === "undefined") {
+      setNotifSupported(false);
+    } else {
+      setNotifOn(
+        localStorage.getItem("tamply-notif") === "on" && Notification.permission === "granted"
+      );
+    }
+  }, []);
+
+  const toggleSound = (v: boolean) => {
+    setSoundOn(v);
+    try { localStorage.setItem("tamply-sound", v ? "on" : "off"); } catch {}
+  };
+
+  const toggleVibration = (v: boolean) => {
+    setVibrationOn(v);
+    try { localStorage.setItem("tamply-vibration", v ? "on" : "off"); } catch {}
+    if (v) {
+      try { navigator.vibrate?.([120, 60, 180]); } catch {}
+    }
+  };
+
+  const toggleNotif = async (v: boolean) => {
+    if (!v) {
+      setNotifOn(false);
+      try { localStorage.setItem("tamply-notif", "off"); } catch {}
+      return;
+    }
+    if (typeof Notification === "undefined") {
+      toast.error("Votre navigateur ne supporte pas les notifications.");
+      return;
+    }
+    let perm = Notification.permission;
+    if (perm === "default") perm = await Notification.requestPermission();
+    if (perm !== "granted") {
+      toast.error("Autorisez les notifications dans votre navigateur pour activer cette option.");
+      return;
+    }
+    setNotifOn(true);
+    try { localStorage.setItem("tamply-notif", "on"); } catch {}
+    toast.success("Notifications activées ✓");
+  };
 
   useEffect(() => {
     if (shop) setForm({
@@ -153,6 +209,58 @@ function Settings() {
       <Button variant="cta" size="xl" disabled={saving} onClick={save} className="w-full sm:w-auto">
         {saving ? "Enregistrement…" : "Enregistrer"}
       </Button>
+
+      <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-card space-y-4">
+        <div>
+          <h2 className="font-bold">Alertes de validation</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Soyez prévenu dès qu'un client scanne votre QR code, même si vous n'êtes pas sur la page de validation.
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/30 p-4">
+          <div className="flex items-start gap-3">
+            <Volume2 className="mt-0.5 h-5 w-5 text-muted-foreground" />
+            <div>
+              <p className="font-semibold text-sm">Son d'alerte</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Joue un « ding-dong » à chaque nouvelle demande.
+              </p>
+            </div>
+          </div>
+          <Switch checked={soundOn} onCheckedChange={toggleSound} />
+        </div>
+
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/30 p-4">
+          <div className="flex items-start gap-3">
+            <Vibrate className="mt-0.5 h-5 w-5 text-muted-foreground" />
+            <div>
+              <p className="font-semibold text-sm">Vibration (mobile)</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {vibrationSupported
+                  ? "Fait vibrer votre téléphone à chaque nouvelle demande."
+                  : "Non disponible sur cet appareil."}
+              </p>
+            </div>
+          </div>
+          <Switch checked={vibrationOn && vibrationSupported} disabled={!vibrationSupported} onCheckedChange={toggleVibration} />
+        </div>
+
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/30 p-4">
+          <div className="flex items-start gap-3">
+            <Bell className="mt-0.5 h-5 w-5 text-muted-foreground" />
+            <div>
+              <p className="font-semibold text-sm">Notifications système</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {notifSupported
+                  ? "Affiche une notification du navigateur, même onglet en arrière-plan."
+                  : "Non disponible sur ce navigateur."}
+              </p>
+            </div>
+          </div>
+          <Switch checked={notifOn} disabled={!notifSupported} onCheckedChange={toggleNotif} />
+        </div>
+      </div>
 
       <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-card space-y-4">
         <div>
