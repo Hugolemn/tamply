@@ -130,11 +130,10 @@ function Hero() {
           Un seul tarif, sans surprise
         </div>
         <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-foreground md:text-5xl">
-          Le prix de{" "}
+          Un tarif simple pour{" "}
           <span className="bg-gradient-to-r from-[#E63946] to-[#FFB800] bg-clip-text text-transparent">
-            2 cafés par mois
-          </span>{" "}
-          pour fidéliser tous vos clients
+            fidéliser vos clients
+          </span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
           Pas de palier, pas de surcoût par client. 30 jours d'essai pour vous décider, sans carte
