@@ -86,8 +86,8 @@ function Header() {
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           <a href="#avantages" className="text-muted-foreground hover:text-foreground">Avantages</a>
-          <Link to="/demo" className="text-muted-foreground hover:text-foreground">Démo</Link>
           <a href="#pour-qui" className="text-muted-foreground hover:text-foreground">Pour qui</a>
+          <Link to="/demo" className="text-muted-foreground hover:text-foreground">Démo</Link>
           <Link to="/tarifs" className="text-muted-foreground hover:text-foreground">Tarifs</Link>
         </nav>
         <div className="flex items-center gap-2">
@@ -113,8 +113,8 @@ function Header() {
         <div className="border-t border-border/50 bg-background/95 backdrop-blur-md md:hidden">
           <nav className="mx-auto flex max-w-6xl flex-col px-4 py-2 text-sm font-semibold">
             <a href="#avantages" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">Avantages</a>
-            <Link to="/demo" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">Démo</Link>
             <a href="#pour-qui" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">Pour qui</a>
+            <Link to="/demo" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">Démo</Link>
             <Link to="/tarifs" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">Tarifs</Link>
             <Link to="/login" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">Connexion</Link>
           </nav>
