@@ -22,6 +22,45 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Download, Trash2, Volume2, Bell, Vibrate } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+const EMOJI_CATEGORIES: { id: string; label: string; emojis: string[] }[] = [
+  {
+    id: "plats",
+    label: "Plats",
+    emojis: ["🍟","🍔","🌭","🍕","🥪","🌮","🌯","🥙","🧆","🥘","🍝","🍜","🍲","🍛","🍱","🍣","🍤","🍙","🍘","🍚","🍢","🍡","🥟","🍥","🥗","🥣","🍿","🥡"],
+  },
+  {
+    id: "boulangerie",
+    label: "Boulangerie",
+    emojis: ["🥐","🥖","🍞","🥨","🥯","🧇","🥞","🧈","🍳","🥓","🥚","🧀"],
+  },
+  {
+    id: "desserts",
+    label: "Desserts",
+    emojis: ["🍩","🍪","🎂","🍰","🧁","🥧","🍫","🍬","🍭","🍮","🍯","🍦","🍨","🍧"],
+  },
+  {
+    id: "fruits",
+    label: "Fruits",
+    emojis: ["🍎","🍏","🍐","🍊","🍋","🍌","🍉","🍇","🍓","🫐","🍈","🍒","🍑","🥭","🍍","🥥","🥝","🍅","🫒","🥑"],
+  },
+  {
+    id: "legumes",
+    label: "Légumes",
+    emojis: ["🥦","🥬","🥒","🌶️","🫑","🌽","🥕","🫛","🧄","🧅","🥔","🍠","🍄","🥜","🌰"],
+  },
+  {
+    id: "boissons",
+    label: "Boissons",
+    emojis: ["☕","🍵","🧃","🥤","🧋","🍶","🍺","🍻","🥂","🍷","🥃","🍸","🍹","🍾","🧉","🥛","🍼"],
+  },
+  {
+    id: "autres",
+    label: "Autres",
+    emojis: ["💇","💅","✂️","🌸","⭐","❤️","🎁","🛍️","📚","🐾","🌿","💎","🔑","🎯","🏆","🎨","🎵","📷"],
+  },
+];
 
 export const Route = createFileRoute("/dashboard/settings")({
   component: Settings,
@@ -222,35 +261,37 @@ function Settings() {
               className="h-11 w-24 rounded-xl text-center text-2xl"
             />
           </div>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {[
-              // Plats & fast-food
-              "🍟","🍔","🌭","🍕","🥪","🌮","🌯","🥙","🧆","🥘","🍝","🍜","🍲","🍛","🍱","🍣","🍤","🍙","🍘","🍚","🍢","🍡","🥟","🍥","🍠",
-              // Boulangerie & petit-déj
-              "🥐","🥖","🍞","🥨","🥯","🧇","🥞","🧈","🍳","🥓","🥚","🧀",
-              // Sucré & desserts
-              "🍩","🍪","🎂","🍰","🧁","🥧","🍫","🍬","🍭","🍮","🍯","🍦","🍨","🍧",
-              // Fruits
-              "🍎","🍏","🍐","🍊","🍋","🍌","🍉","🍇","🍓","🫐","🍈","🍒","🍑","🥭","🍍","🥥","🥝","🍅","🫒","🥑",
-              // Légumes
-              "🥦","🥬","🥒","🌶️","🫑","🌽","🥕","🫛","🧄","🧅","🥔","🍠","🍄","🥜","🌰",
-              // Boissons
-              "☕","🍵","🧃","🥤","🧋","🍶","🍺","🍻","🥂","🍷","🥃","🍸","🍹","🍾","🧉","🥛","🍼",
-              // Autres
-              "🥗","🥣","🍿","🧂","🥡","🍴","🍽️","🥄"
-            ].map((e) => (
-              <button
-                key={e}
-                type="button"
-                onClick={() => setForm({ ...form, stamp_emoji: e })}
-                className={`grid h-10 w-10 place-items-center rounded-lg border text-xl transition hover:scale-110 ${
-                  form.stamp_emoji === e ? "border-primary bg-primary/10" : "border-border bg-muted/30"
-                }`}
-              >
-                {e}
-              </button>
+          <Tabs defaultValue="plats" className="mt-4">
+            <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 bg-muted/50 p-1">
+              {EMOJI_CATEGORIES.map((cat) => (
+                <TabsTrigger
+                  key={cat.id}
+                  value={cat.id}
+                  className="rounded-lg px-3 py-1.5 text-xs font-semibold data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
+                  {cat.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            {EMOJI_CATEGORIES.map((cat) => (
+              <TabsContent key={cat.id} value={cat.id} className="mt-3">
+                <div className="grid grid-cols-8 gap-2 rounded-xl border border-border/60 bg-muted/20 p-3 sm:grid-cols-10">
+                  {cat.emojis.map((e) => (
+                    <button
+                      key={e}
+                      type="button"
+                      onClick={() => setForm({ ...form, stamp_emoji: e })}
+                      className={`grid h-10 w-10 place-items-center rounded-lg border text-xl transition hover:scale-110 ${
+                        form.stamp_emoji === e ? "border-primary bg-primary/10" : "border-transparent bg-background"
+                      }`}
+                    >
+                      {e}
+                    </button>
+                  ))}
+                </div>
+              </TabsContent>
             ))}
-          </div>
+          </Tabs>
         </div>
       </div>
 
