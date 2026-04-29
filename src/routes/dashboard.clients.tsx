@@ -1,7 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useShop } from "@/lib/use-shop";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Users, QrCode, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/clients")({
   component: Clients,
@@ -30,14 +32,14 @@ function Clients() {
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-extrabold">Vos clients</h1>
-        <p className="mt-1 text-sm text-muted-foreground">{list.length} client{list.length > 1 ? "s" : ""}</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {loading ? "Chargement…" : `${list.length} client${list.length > 1 ? "s" : ""}`}
+        </p>
       </div>
       {loading ? (
-        <div className="text-muted-foreground">Chargement…</div>
+        <ClientsSkeleton />
       ) : list.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-border bg-card p-10 text-center text-muted-foreground">
-          Aucun client pour l'instant.
-        </div>
+        <EmptyClients />
       ) : (
         <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-card">
           <table className="w-full text-sm">
@@ -68,6 +70,41 @@ function Clients() {
           </table>
         </div>
       )}
+    </div>
+  );
+}
+
+function ClientsSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-card">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="flex items-center justify-between gap-4 border-b border-border/60 px-4 py-3 last:border-0">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-6 w-10 rounded-full" />
+          <Skeleton className="hidden h-4 w-12 sm:block" />
+          <Skeleton className="hidden h-4 w-20 sm:block" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function EmptyClients() {
+  return (
+    <div className="rounded-3xl border-2 border-dashed border-primary/40 bg-gradient-hero p-8 text-center shadow-card sm:p-12">
+      <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl bg-gradient-cta shadow-soft">
+        <Users className="h-8 w-8 text-foreground" />
+      </div>
+      <h2 className="mt-4 text-xl font-extrabold">Aucun client pour le moment</h2>
+      <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
+        Affichez votre QR code au comptoir : dès qu'un client le scanne, il apparaît ici avec son nombre de tampons.
+      </p>
+      <Link
+        to="/dashboard/qr"
+        className="mt-6 inline-flex items-center gap-2 rounded-xl bg-foreground px-5 py-2.5 text-sm font-semibold text-background shadow-soft transition hover:brightness-110"
+      >
+        <QrCode className="h-4 w-4" /> Afficher mon QR code <ArrowRight className="h-4 w-4" />
+      </Link>
     </div>
   );
 }
