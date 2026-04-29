@@ -1,15 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, MessageCircle, Store, UtensilsCrossed, Sandwich, Beer, Truck, IceCream, Menu, X } from "lucide-react";
+import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, Store, UtensilsCrossed, Sandwich, Beer, Truck, IceCream, Menu, X } from "lucide-react";
 import logo from "@/assets/logo.png";
-import { FaqChatbot } from "@/components/faq-chatbot";
 import { useRevealOnScroll } from "@/hooks/use-reveal-on-scroll";
 
 export const Route = createFileRoute("/")({
@@ -75,8 +68,6 @@ function Landing() {
       <HowItWorks />
       <ForWho />
       <Pricing />
-      <FinalCta />
-      <Faq />
       <Footer />
       <StickyMobileCta />
     </div>
@@ -125,7 +116,6 @@ function Header() {
             <Link to="/demo" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">Démo</Link>
             <a href="#pour-qui" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">Pour qui</a>
             <Link to="/tarifs" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">Tarifs</Link>
-            <a href="#faq" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">FAQ</a>
             <Link to="/login" onClick={close} className="rounded-lg px-3 py-3 text-foreground/80 hover:bg-muted hover:text-foreground">Connexion</Link>
           </nav>
         </div>
