@@ -16,7 +16,7 @@ function Sub() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold">Abonnement</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Tamply Pro — 29€/mois par établissement.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Tamply Pro — 24,99€/mois par établissement.</p>
       </div>
 
       <div className="rounded-3xl border-2 border-primary bg-card p-6 shadow-glow">
@@ -33,7 +33,7 @@ function Sub() {
             : "Merci de soutenir Tamply 💛"}
         </p>
         <Button variant="cta" size="xl" disabled className="mt-5 w-full sm:w-auto">
-          Activer Tamply Pro · 29€/mois (bientôt)
+          Activer Tamply Pro · 24,99€/mois (bientôt)
         </Button>
         <p className="mt-2 text-xs text-muted-foreground">
           Le paiement sécurisé Stripe sera disponible dans la prochaine mise à jour.
