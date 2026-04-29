@@ -130,9 +130,9 @@ function Hero() {
           Un seul tarif, sans surprise
         </div>
         <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-foreground md:text-5xl">
-          Un tarif simple pour{" "}
+          Fidélisez vos clients{" "}
           <span className="bg-gradient-to-r from-[#E63946] to-[#FFB800] bg-clip-text text-transparent">
-            fidéliser vos clients
+            sans exploser votre budget
           </span>
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
