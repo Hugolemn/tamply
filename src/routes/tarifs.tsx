@@ -180,8 +180,9 @@ function PricingCard() {
               <Coffee className="h-4 w-4 text-secondary" />
             </div>
             <p className="text-xs leading-relaxed text-muted-foreground">
-              <span className="font-semibold text-foreground">Moins d'1€ par jour.</span> Aucune
-              limite de clients, aucune commission par tampon.
+              <span className="font-semibold text-foreground">Moins d'1€ par jour.</span> Le prix
+              de 2 cafés pour fidéliser tous vos clients ce mois-ci — sans aucune limite, sans
+              commission par tampon.
             </p>
           </div>
 
