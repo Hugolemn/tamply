@@ -65,8 +65,8 @@ function Landing() {
       <Header />
       <Hero />
       <Benefits />
-      <HowItWorks />
       <ForWho />
+      <HowItWorks />
       <Pricing />
       <Footer />
       <StickyMobileCta />
