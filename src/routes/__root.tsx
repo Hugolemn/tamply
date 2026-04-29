@@ -79,7 +79,6 @@ export const Route = createRootRoute({
           "Tamply : la carte de fidélité digitale pour restaurants, sandwicheries, brasseries, cafés et friteries. Aucune app à télécharger pour vos clients. Validez chaque tampon en un clic.",
       },
       { name: "author", content: "Tamply" },
-      { name: "theme-color", content: "#FFD700" },
       { name: "robots", content: "index, follow" },
       { property: "og:title", content: "Tamply — Carte de fidélité digitale" },
       { property: "og:description", content: "La fidélité digitale simple pour tous les commerces de l'Horeca." },
