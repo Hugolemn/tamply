@@ -12,7 +12,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Restaurants, sandwicheries, brasseries, cafés, friteries, food trucks : fidélisez vos clients sans qu'ils téléchargent d'app. Validez chaque tampon en un clic. 30 jours d'essai gratuit, puis 29€/mois.",
+          "Restaurants, sandwicheries, brasseries, cafés, friteries, food trucks : fidélisez vos clients sans qu'ils téléchargent d'app. Validez chaque tampon en un clic. 30 jours d'essai gratuit, puis 24,99€/mois.",
       },
       { property: "og:title", content: "Tamply — La carte de fidélité digitale pour l'Horeca" },
       { property: "og:description", content: "Aucune app à télécharger. Validez en un clic. 30 jours gratuits." },
@@ -35,9 +35,9 @@ export const Route = createFileRoute("/")({
             "Carte de fidélité digitale pour les commerces de l'Horeca. Aucune application à télécharger pour les clients.",
           offers: {
             "@type": "Offer",
-            price: "29",
+            price: "24.99",
             priceCurrency: "EUR",
-            description: "29€/mois par établissement, 30 jours d'essai gratuit",
+            description: "24,99€/mois par établissement, 30 jours d'essai gratuit",
           },
         }),
       },
@@ -414,7 +414,7 @@ function Pricing() {
             </div>
             <div className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Tamply Pro</div>
             <div className="mt-4 flex items-baseline gap-1">
-              <span className="text-5xl font-extrabold">29€</span>
+              <span className="text-5xl font-extrabold">24,99€</span>
               <span className="text-muted-foreground">/mois</span>
             </div>
             <p className="mt-2 text-sm text-muted-foreground">par établissement, après l'essai gratuit</p>
