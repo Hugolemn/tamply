@@ -176,14 +176,14 @@ function OnboardingChecklist({
       to: "/dashboard/qr" as const,
     },
     {
-      label: "Valider votre premier tampon",
-      done: stats.tamponsAujourdhui > 0 || stats.clients > 0,
-      to: "/dashboard/validation" as const,
-    },
-    {
       label: "Inviter votre premier client à scanner",
       done: stats.clients > 0,
       to: "/dashboard/qr" as const,
+    },
+    {
+      label: "Valider votre premier tampon",
+      done: stats.tamponsAujourdhui > 0 || stats.clients > 0,
+      to: "/dashboard/validation" as const,
     },
   ];
 
