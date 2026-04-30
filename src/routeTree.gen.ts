@@ -26,6 +26,7 @@ import { Route as DashboardSubscriptionRouteImport } from './routes/dashboard.su
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
 import { Route as DashboardQrRouteImport } from './routes/dashboard.qr'
 import { Route as DashboardClientsRouteImport } from './routes/dashboard.clients'
+import { Route as DashboardAccountRouteImport } from './routes/dashboard.account'
 import { Route as CShopIdRouteImport } from './routes/c.$shopId'
 
 const TarifsRoute = TarifsRouteImport.update({
@@ -113,6 +114,11 @@ const DashboardClientsRoute = DashboardClientsRouteImport.update({
   path: '/clients',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardAccountRoute = DashboardAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const CShopIdRoute = CShopIdRouteImport.update({
   id: '/c/$shopId',
   path: '/c/$shopId',
@@ -132,6 +138,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/tarifs': typeof TarifsRoute
   '/c/$shopId': typeof CShopIdRoute
+  '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/clients': typeof DashboardClientsRoute
   '/dashboard/qr': typeof DashboardQrRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/tarifs': typeof TarifsRoute
   '/c/$shopId': typeof CShopIdRoute
+  '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/clients': typeof DashboardClientsRoute
   '/dashboard/qr': typeof DashboardQrRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -172,6 +180,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/tarifs': typeof TarifsRoute
   '/c/$shopId': typeof CShopIdRoute
+  '/dashboard/account': typeof DashboardAccountRoute
   '/dashboard/clients': typeof DashboardClientsRoute
   '/dashboard/qr': typeof DashboardQrRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
@@ -194,6 +203,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/tarifs'
     | '/c/$shopId'
+    | '/dashboard/account'
     | '/dashboard/clients'
     | '/dashboard/qr'
     | '/dashboard/settings'
@@ -213,6 +223,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/tarifs'
     | '/c/$shopId'
+    | '/dashboard/account'
     | '/dashboard/clients'
     | '/dashboard/qr'
     | '/dashboard/settings'
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/tarifs'
     | '/c/$shopId'
+    | '/dashboard/account'
     | '/dashboard/clients'
     | '/dashboard/qr'
     | '/dashboard/settings'
@@ -377,6 +389,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardClientsRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/account': {
+      id: '/dashboard/account'
+      path: '/account'
+      fullPath: '/dashboard/account'
+      preLoaderRoute: typeof DashboardAccountRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/c/$shopId': {
       id: '/c/$shopId'
       path: '/c/$shopId'
@@ -388,6 +407,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface DashboardRouteChildren {
+  DashboardAccountRoute: typeof DashboardAccountRoute
   DashboardClientsRoute: typeof DashboardClientsRoute
   DashboardQrRoute: typeof DashboardQrRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
@@ -397,6 +417,7 @@ interface DashboardRouteChildren {
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAccountRoute: DashboardAccountRoute,
   DashboardClientsRoute: DashboardClientsRoute,
   DashboardQrRoute: DashboardQrRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,

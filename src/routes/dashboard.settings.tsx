@@ -1,26 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useShop } from "@/lib/use-shop";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { useServerFn } from "@tanstack/react-start";
-import { deleteMyAccount } from "@/server/account.functions";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Download, Trash2, Volume2, Bell, Vibrate } from "lucide-react";
+import { Download, Volume2, Bell, Vibrate } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -71,10 +57,6 @@ function Settings() {
   const [form, setForm] = useState({ nom: "", description_recompense: "", tampons_requis: 10, couleur: "#FFD700", logo_url: "", stamp_emoji: "🍟" });
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [confirmText, setConfirmText] = useState("");
-  const navigate = useNavigate();
-  const deleteAccountFn = useServerFn(deleteMyAccount);
 
   // Préférences notifications (partagées avec /dashboard/validation via localStorage)
   const [soundOn, setSoundOn] = useState(true);
@@ -191,19 +173,6 @@ function Settings() {
       toast.error(e.message ?? "Erreur lors de l'export");
     } finally {
       setExporting(false);
-    }
-  };
-
-  const deleteAccount = async () => {
-    setDeleting(true);
-    try {
-      await deleteAccountFn({});
-      await supabase.auth.signOut();
-      toast.success("Compte supprimé. À bientôt.");
-      navigate({ to: "/" });
-    } catch (e: any) {
-      toast.error(e.message ?? "Erreur lors de la suppression");
-      setDeleting(false);
     }
   };
 
