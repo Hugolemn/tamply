@@ -177,11 +177,11 @@ function ClientFlow() {
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-gradient-hero px-4 py-6">
+    <div className="min-h-screen bg-neutral-50 px-4 py-6" style={{ background: "oklch(97% 0.01 95)" }}>
       <div className="mx-auto flex min-h-[calc(100vh-3rem)] max-w-md flex-col">
-        <div className="mt-2 flex items-center justify-center gap-2 opacity-70">
+        <div className="mt-2 flex items-center justify-center gap-2 opacity-60">
           <img src={logo} alt="Logo Tamply" className="h-7 w-7 object-contain" />
-          <span className="text-sm font-extrabold">Tamply</span>
+          <span className="text-xs font-bold tracking-wide">Tamply</span>
         </div>
         <div className="mt-6 flex flex-1 flex-col">{children}</div>
       </div>
@@ -191,14 +191,21 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 
 function Header({ shop }: { shop: Shop }) {
   return (
-    <div className="text-center">
-      {shop.logo_url ? (
-        <img src={shop.logo_url} alt={shop.nom} className="mx-auto h-16 w-16 rounded-2xl object-cover shadow-soft" />
-      ) : (
-        <div className="mx-auto grid h-16 w-16 place-items-center rounded-2xl text-3xl shadow-soft" style={{ background: shop.couleur }}>🍟</div>
-      )}
-      <h1 className="mt-3 text-xl font-extrabold">{shop.nom}</h1>
-      <p className="mt-1 text-xs text-muted-foreground">Carte de fidélité digitale</p>
+    <div className="flex flex-col items-center text-center">
+      <div className="rounded-full bg-white p-3 shadow-lg ring-1 ring-black/5">
+        {shop.logo_url ? (
+          <img src={shop.logo_url} alt={shop.nom} className="h-14 w-14 rounded-full object-cover" />
+        ) : (
+          <div
+            className="grid h-14 w-14 place-items-center rounded-full text-3xl"
+            style={{ background: shop.couleur }}
+          >
+            {shop.stamp_emoji || "🍟"}
+          </div>
+        )}
+      </div>
+      <h1 className="mt-4 text-2xl font-semibold tracking-tight text-neutral-900">{shop.nom}</h1>
+      <p className="mt-1 text-sm text-neutral-500">Fidélité récompensée</p>
     </div>
   );
 }
@@ -260,40 +267,60 @@ function WaitingStep() {
 function StampedStep({ shop, count, restart }: { shop: Shop; count: number; restart: () => void }) {
   const total = shop.tampons_requis;
   const progress = Math.min(count, total);
+  const remaining = Math.max(0, total - progress);
   return (
-    <div className="mt-10 flex flex-1 flex-col">
-      <h2 className="text-center text-2xl font-extrabold">Super ! +1 tampon 🎉</h2>
-      <p className="mt-1 text-center text-muted-foreground">
-        Tu as <b>{progress}</b> tampon{progress > 1 ? "s" : ""} sur <b>{total}</b>
+    <div className="mt-8 flex flex-1 flex-col">
+      <p className="text-center text-sm font-semibold uppercase tracking-wider" style={{ color: shop.couleur }}>
+        +1 tampon ajouté
       </p>
-      <div className="mt-6 rounded-3xl border border-border/60 bg-card p-5 shadow-card">
-        <StampGrid total={total} filled={progress} emoji={shop.stamp_emoji || "🍟"} />
-        <div className="mt-4 text-center text-sm font-semibold">
-          Plus que <b className="text-secondary">{Math.max(0, total - progress)}</b> pour ta récompense !
+      <h2 className="mt-1 text-center text-2xl font-semibold tracking-tight text-neutral-900">
+        Merci pour ta visite 🎉
+      </h2>
+
+      <div className="mt-6 rounded-2xl border border-neutral-200 bg-white p-6 shadow-lg">
+        <h3 className="text-base font-medium text-neutral-800">Votre prochaine récompense</h3>
+        <div className="mt-4">
+          <StampGrid
+            total={total}
+            filled={progress}
+            emoji={shop.stamp_emoji || "🍟"}
+            color={shop.couleur}
+            shape={(shop.stamp_shape as StampShapeType) || "rounded"}
+          />
+        </div>
+        <div className="mt-5 text-center">
+          <p className="text-base font-medium text-neutral-700">{progress} / {total} tampons</p>
+          <p className="mt-1 text-sm text-neutral-500">
+            {remaining === 0 ? "Récompense débloquée !" : `Plus que ${remaining} pour ${shop.description_recompense.toLowerCase()}`}
+          </p>
         </div>
       </div>
       <div className="mt-auto pt-8">
-        <Button variant="outline" size="xl" onClick={restart} className="w-full">Terminé</Button>
+        <Button
+          size="xl"
+          onClick={restart}
+          className="w-full rounded-xl text-white shadow-sm hover:brightness-110"
+          style={{ background: shop.couleur }}
+        >
+          Terminé
+        </Button>
       </div>
     </div>
   );
 }
 
-function StampGrid({ total, filled, emoji }: { total: number; filled: number; emoji: string }) {
+function StampGrid({
+  total, filled, emoji, color, shape,
+}: { total: number; filled: number; emoji: string; color: string; shape: StampShapeType }) {
   const cols = total <= 10 ? 5 : total <= 16 ? 4 : 5;
   return (
     <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}>
       {Array.from({ length: total }).map((_, i) => {
         const done = i < filled;
         return (
-          <div
-            key={i}
-            className={`aspect-square rounded-xl border-2 grid place-items-center text-lg font-bold transition-all ${
-              done ? "bg-primary border-primary text-foreground shadow-soft scale-100" : "bg-muted/40 border-dashed border-border text-muted-foreground"
-            }`}
-          >
-            {done ? emoji : i + 1}
-          </div>
+          <ShapeBox key={i} shape={shape} filled={done} color={color}>
+            {done ? emoji : ""}
+          </ShapeBox>
         );
       })}
     </div>
