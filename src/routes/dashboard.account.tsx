@@ -21,10 +21,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Mail, KeyRound, FileText, Trash2, AlertTriangle, Receipt } from "lucide-react";
+import { Mail, KeyRound, FileText, Trash2, AlertTriangle, Receipt, CreditCard } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard/account")({
   head: () => ({ meta: [{ title: "Mon compte · Tamply" }] }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    tab: (search.tab as string) || "profil",
+  }),
   component: AccountPage,
 });
 
@@ -33,6 +36,7 @@ function AccountPage() {
   const { shop } = useShop();
   const navigate = useNavigate();
   const deleteAccountFn = useServerFn(deleteMyAccount);
+  const { tab } = Route.useSearch();
 
   // Email
   const [newEmail, setNewEmail] = useState("");
@@ -107,19 +111,25 @@ function AccountPage() {
 
   if (!user) return null;
 
+  const trialDays = shop ? Math.max(0, Math.ceil((new Date(shop.trial_end).getTime() - Date.now()) / 86400000)) : 0;
+  const isTrial = shop?.statut_abonnement === "essai";
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold">Mon compte</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Gérez votre profil, vos factures et la sécurité de votre compte.
+          Gérez votre profil, votre abonnement, vos factures et la sécurité de votre compte.
         </p>
       </div>
 
-      <Tabs defaultValue="profil" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 bg-muted/50 p-1">
+      <Tabs value={tab} onValueChange={(v) => navigate({ to: "/dashboard/account", search: { tab: v }, replace: true })} className="space-y-6">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-muted/50 p-1">
           <TabsTrigger value="profil" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
             Profil
+          </TabsTrigger>
+          <TabsTrigger value="abonnement" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            Abonnement
           </TabsTrigger>
           <TabsTrigger value="factures" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
             Factures
@@ -198,6 +208,49 @@ function AccountPage() {
             <Button variant="cta" disabled={savingPassword} onClick={updatePassword} className="w-full sm:w-auto">
               {savingPassword ? "Mise à jour…" : "Mettre à jour le mot de passe"}
             </Button>
+          </div>
+        </TabsContent>
+
+        {/* ABONNEMENT */}
+        <TabsContent value="abonnement" className="space-y-6">
+          <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-card space-y-4">
+            <div className="flex items-start gap-3">
+              <CreditCard className="mt-0.5 h-5 w-5 text-muted-foreground" />
+              <div>
+                <h2 className="font-bold">Tamply Pro</h2>
+                <p className="mt-0.5 text-sm text-muted-foreground">
+                  24,99€/mois par établissement. Sans engagement, résiliable à tout moment.
+                </p>
+              </div>
+            </div>
+
+            {shop && (
+              <div className="rounded-xl border-2 border-primary/40 bg-primary/5 p-5">
+                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Statut actuel</div>
+                <div className="mt-2 flex flex-wrap items-baseline gap-2">
+                  <span className="text-2xl font-extrabold">
+                    {isTrial ? "Essai gratuit" : shop.statut_abonnement === "actif" ? "Actif" : "Expiré"}
+                  </span>
+                  {isTrial && (
+                    <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-bold text-secondary">
+                      {trialDays} jour{trialDays > 1 ? "s" : ""} restant{trialDays > 1 ? "s" : ""}
+                    </span>
+                  )}
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  {isTrial
+                    ? `Votre essai gratuit se termine le ${new Date(shop.trial_end).toLocaleDateString("fr-FR")}. Activez votre abonnement avant cette date pour continuer sans interruption.`
+                    : "Merci de soutenir Tamply 💛"}
+                </p>
+              </div>
+            )}
+
+            <Button variant="cta" size="xl" disabled className="w-full sm:w-auto">
+              Activer Tamply Pro · 24,99€/mois (bientôt)
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              Le paiement sécurisé Stripe sera disponible dans la prochaine mise à jour.
+            </p>
           </div>
         </TabsContent>
 
