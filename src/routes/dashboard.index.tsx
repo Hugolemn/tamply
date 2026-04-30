@@ -159,7 +159,7 @@ function OnboardingChecklist({
   stats,
   statsLoading,
 }: {
-  shop: { id: string; logo_url: string | null; description_recompense: string; nom: string };
+  shop: { id: string; logo_url: string | null; description_recompense: string; nom: string; qr_displayed_at: string | null };
   stats: OnbStats;
   statsLoading: boolean;
 }) {
@@ -172,7 +172,7 @@ function OnboardingChecklist({
     },
     {
       label: "Afficher votre QR code au comptoir",
-      done: stats.clients > 0,
+      done: Boolean(shop.qr_displayed_at) || stats.clients > 0,
       to: "/dashboard/qr" as const,
     },
     {
@@ -182,7 +182,7 @@ function OnboardingChecklist({
     },
     {
       label: "Valider votre premier tampon",
-      done: stats.tamponsAujourdhui > 0 || stats.clients > 0,
+      done: stats.tamponsAujourdhui > 0,
       to: "/dashboard/validation" as const,
     },
   ];

@@ -14,6 +14,7 @@ export interface Shop {
   statut_abonnement: string;
   trial_end: string;
   created_at: string;
+  qr_displayed_at: string | null;
 }
 
 export function useShop() {

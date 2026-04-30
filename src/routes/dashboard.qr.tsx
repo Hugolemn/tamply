@@ -3,14 +3,16 @@ import { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useShop } from "@/lib/use-shop";
 import { Button } from "@/components/ui/button";
-import { Download, ExternalLink } from "lucide-react";
+import { Download, ExternalLink, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard/qr")({
   component: QrPage,
 });
 
 function QrPage() {
-  const { shop } = useShop();
+  const { shop, refresh } = useShop();
   const ref = useRef<HTMLDivElement>(null);
 
   if (!shop) return null;
@@ -23,6 +25,19 @@ function QrPage() {
     link.download = `tamply-qr-${shop.nom.replace(/\s+/g, "-").toLowerCase()}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
+  };
+
+  const markDisplayed = async () => {
+    const { error } = await supabase
+      .from("shops")
+      .update({ qr_displayed_at: new Date().toISOString() })
+      .eq("id", shop.id);
+    if (error) {
+      toast.error("Impossible de mettre à jour");
+      return;
+    }
+    toast.success("Bravo ! QR code marqué comme affiché 🎉");
+    refresh();
   };
 
   return (
@@ -47,6 +62,17 @@ function QrPage() {
             <Button variant="outline" size="xl">Voir l'aperçu client</Button>
           </a>
         </div>
+        {shop.qr_displayed_at ? (
+          <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-secondary/15 px-3 py-1.5 text-xs font-semibold text-secondary">
+            <CheckCircle2 className="h-4 w-4" /> QR code affiché au comptoir
+          </div>
+        ) : (
+          <div className="mt-6">
+            <Button variant="outline" onClick={markDisplayed}>
+              <CheckCircle2 /> J'ai affiché mon QR code
+            </Button>
+          </div>
+        )}
       </div>
       <div className="rounded-2xl bg-accent p-5 text-sm">
         <b>💡 Astuce :</b> Imprimez le QR en A5 minimum, plastifiez-le, et placez-le bien visible près de la caisse.
