@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useShop } from "@/lib/use-shop";
-import { Users, CheckCircle2, Gift, Calendar, ArrowRight, QrCode, Sparkles } from "lucide-react";
+import { Users, CheckCircle2, Gift, Calendar, ArrowRight, QrCode, Sparkles, Rocket, X, Circle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/dashboard/")({
