@@ -59,9 +59,7 @@ export function SettingsContent() {
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
-  const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const dropZoneRef = useRef<HTMLDivElement>(null);
 
   const [soundOn, setSoundOn] = useState(true);
   const [vibrationOn, setVibrationOn] = useState(true);
@@ -225,24 +223,6 @@ export function SettingsContent() {
     refresh();
   };
 
-  const onDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDragOver(false);
-    const file = e.dataTransfer.files?.[0];
-    if (file) uploadLogoFile(file);
-  };
-
-  const onPaste = (e: React.ClipboardEvent) => {
-    const item = Array.from(e.clipboardData.items).find((i) => i.type.startsWith("image/"));
-    if (item) {
-      const file = item.getAsFile();
-      if (file) {
-        e.preventDefault();
-        uploadLogoFile(file);
-      }
-    }
-  };
-
   if (!shop) return null;
 
   return (
@@ -257,19 +237,9 @@ export function SettingsContent() {
         <div>
           <Label className="mb-1.5 block text-sm font-semibold">Logo (optionnel)</Label>
           <p className="mb-3 text-xs text-muted-foreground">
-            Glissez-déposez, collez (Ctrl+V) ou choisissez une image. PNG, JPG, WEBP ou SVG, 5 Mo max.
+            PNG, JPG, WEBP ou SVG, 5 Mo max.
           </p>
-          <div
-            ref={dropZoneRef}
-            tabIndex={0}
-            onPaste={onPaste}
-            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={onDrop}
-            className={`flex flex-col items-center gap-4 rounded-2xl border-2 border-dashed p-5 transition sm:flex-row sm:items-center sm:gap-5 ${
-              dragOver ? "border-primary bg-primary/5" : "border-border bg-muted/20"
-            }`}
-          >
+          <div className="flex flex-col items-center gap-4 rounded-2xl border border-border/60 bg-muted/20 p-5 sm:flex-row sm:items-center sm:gap-5">
             <div className="grid h-20 w-20 flex-none place-items-center overflow-hidden rounded-2xl border border-border/60 bg-background">
               {uploadingLogo ? (
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
@@ -283,10 +253,7 @@ export function SettingsContent() {
               <p className="text-sm font-semibold">
                 {form.logo_url ? "Logo en place" : "Aucun logo"}
               </p>
-              <p className="mt-0.5 text-xs text-muted-foreground">
-                Glissez une image ici ou collez-la depuis le presse-papiers.
-              </p>
-              <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
+              <div className="mt-2 flex flex-wrap justify-center gap-2 sm:justify-start">
                 <Button
                   type="button"
                   variant="outline"
