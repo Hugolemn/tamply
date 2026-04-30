@@ -1,0 +1,3 @@
+ALTER TABLE public.shops
+  ADD COLUMN IF NOT EXISTS card_template TEXT NOT NULL DEFAULT 'modern',
+  ADD COLUMN IF NOT EXISTS stamp_shape TEXT NOT NULL DEFAULT 'rounded';

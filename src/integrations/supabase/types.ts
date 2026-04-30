@@ -81,6 +81,7 @@ export type Database = {
       }
       shops: {
         Row: {
+          card_template: string
           couleur: string
           created_at: string
           description_recompense: string
@@ -91,12 +92,14 @@ export type Database = {
           owner_nom: string | null
           qr_displayed_at: string | null
           stamp_emoji: string
+          stamp_shape: string
           statut_abonnement: string
           stripe_customer_id: string | null
           tampons_requis: number
           trial_end: string
         }
         Insert: {
+          card_template?: string
           couleur?: string
           created_at?: string
           description_recompense?: string
@@ -107,12 +110,14 @@ export type Database = {
           owner_nom?: string | null
           qr_displayed_at?: string | null
           stamp_emoji?: string
+          stamp_shape?: string
           statut_abonnement?: string
           stripe_customer_id?: string | null
           tampons_requis?: number
           trial_end?: string
         }
         Update: {
+          card_template?: string
           couleur?: string
           created_at?: string
           description_recompense?: string
@@ -123,6 +128,7 @@ export type Database = {
           owner_nom?: string | null
           qr_displayed_at?: string | null
           stamp_emoji?: string
+          stamp_shape?: string
           statut_abonnement?: string
           stripe_customer_id?: string | null
           tampons_requis?: number
