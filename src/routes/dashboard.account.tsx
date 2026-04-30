@@ -22,6 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Mail, KeyRound, FileText, Trash2, AlertTriangle, Receipt, CreditCard } from "lucide-react";
+import { SettingsContent } from "@/components/settings-content";
 
 export const Route = createFileRoute("/dashboard/account")({
   head: () => ({ meta: [{ title: "Mon compte · Tamply" }] }),
@@ -124,9 +125,12 @@ function AccountPage() {
       </div>
 
       <Tabs value={tab} onValueChange={(v) => navigate({ to: "/dashboard/account", search: { tab: v }, replace: true })} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-muted/50 p-1">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 bg-muted/50 p-1">
           <TabsTrigger value="profil" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
             Profil
+          </TabsTrigger>
+          <TabsTrigger value="parametres" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            Paramètres
           </TabsTrigger>
           <TabsTrigger value="abonnement" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm">
             Abonnement
@@ -209,6 +213,11 @@ function AccountPage() {
               {savingPassword ? "Mise à jour…" : "Mettre à jour le mot de passe"}
             </Button>
           </div>
+        </TabsContent>
+
+        {/* PARAMÈTRES */}
+        <TabsContent value="parametres" className="space-y-6">
+          <SettingsContent />
         </TabsContent>
 
         {/* ABONNEMENT */}
