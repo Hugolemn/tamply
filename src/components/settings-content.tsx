@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useShop } from "@/lib/use-shop";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Download, Volume2, Bell, Vibrate } from "lucide-react";
+import { Download, Volume2, Bell, Vibrate, Upload, ImageIcon, Trash2, Loader2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -47,11 +47,21 @@ const EMOJI_CATEGORIES: { id: string; label: string; emojis: string[] }[] = [
   },
 ];
 
+const PRESET_COLORS = [
+  "#FFD700", "#F59E0B", "#EF4444", "#EC4899", "#A855F7",
+  "#6366F1", "#3B82F6", "#06B6D4", "#10B981", "#84CC16",
+  "#78716C", "#0F172A",
+];
+
 export function SettingsContent() {
   const { shop, refresh } = useShop();
   const [form, setForm] = useState({ nom: "", description_recompense: "", tampons_requis: 10, couleur: "#FFD700", logo_url: "", stamp_emoji: "🍟" });
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dropZoneRef = useRef<HTMLDivElement>(null);
 
   const [soundOn, setSoundOn] = useState(true);
   const [vibrationOn, setVibrationOn] = useState(true);
@@ -170,6 +180,69 @@ export function SettingsContent() {
     }
   };
 
+  const uploadLogoFile = async (file: File) => {
+    if (!shop) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Veuillez fournir une image (PNG, JPG, WEBP, SVG…)");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image trop lourde (max 5 Mo)");
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Non authentifié");
+      const ext = file.name.split(".").pop()?.toLowerCase() || "png";
+      const path = `${user.id}/${shop.id}-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from("shop-logos")
+        .upload(path, file, { upsert: true, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("shop-logos").getPublicUrl(path);
+      const newUrl = pub.publicUrl;
+      const { error: updErr } = await supabase.from("shops").update({ logo_url: newUrl }).eq("id", shop.id);
+      if (updErr) throw updErr;
+      setForm((f) => ({ ...f, logo_url: newUrl }));
+      toast.success("Logo mis à jour ✓");
+      refresh();
+    } catch (e: any) {
+      toast.error(e.message ?? "Erreur lors de l'upload");
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
+  const removeLogo = async () => {
+    if (!shop) return;
+    setUploadingLogo(true);
+    const { error } = await supabase.from("shops").update({ logo_url: null }).eq("id", shop.id);
+    setUploadingLogo(false);
+    if (error) { toast.error(error.message); return; }
+    setForm((f) => ({ ...f, logo_url: "" }));
+    toast.success("Logo supprimé");
+    refresh();
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) uploadLogoFile(file);
+  };
+
+  const onPaste = (e: React.ClipboardEvent) => {
+    const item = Array.from(e.clipboardData.items).find((i) => i.type.startsWith("image/"));
+    if (item) {
+      const file = item.getAsFile();
+      if (file) {
+        e.preventDefault();
+        uploadLogoFile(file);
+      }
+    }
+  };
+
   if (!shop) return null;
 
   return (
@@ -180,15 +253,130 @@ export function SettingsContent() {
           <Label className="mb-1.5 block text-sm font-semibold">Nom</Label>
           <Input value={form.nom} onChange={(e) => setForm({ ...form, nom: e.target.value })} className="h-11 rounded-xl" />
         </div>
+
         <div>
-          <Label className="mb-1.5 block text-sm font-semibold">URL du logo (optionnel)</Label>
-          <Input value={form.logo_url} onChange={(e) => setForm({ ...form, logo_url: e.target.value })} placeholder="https://…" className="h-11 rounded-xl" />
+          <Label className="mb-1.5 block text-sm font-semibold">Logo (optionnel)</Label>
+          <p className="mb-3 text-xs text-muted-foreground">
+            Glissez-déposez, collez (Ctrl+V) ou choisissez une image. PNG, JPG, WEBP ou SVG, 5 Mo max.
+          </p>
+          <div
+            ref={dropZoneRef}
+            tabIndex={0}
+            onPaste={onPaste}
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={onDrop}
+            className={`flex flex-col items-center gap-4 rounded-2xl border-2 border-dashed p-5 transition sm:flex-row sm:items-center sm:gap-5 ${
+              dragOver ? "border-primary bg-primary/5" : "border-border bg-muted/20"
+            }`}
+          >
+            <div className="grid h-20 w-20 flex-none place-items-center overflow-hidden rounded-2xl border border-border/60 bg-background">
+              {uploadingLogo ? (
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              ) : form.logo_url ? (
+                <img src={form.logo_url} alt="Logo" className="h-full w-full object-contain" />
+              ) : (
+                <ImageIcon className="h-7 w-7 text-muted-foreground/60" />
+              )}
+            </div>
+            <div className="flex-1 text-center sm:text-left">
+              <p className="text-sm font-semibold">
+                {form.logo_url ? "Logo en place" : "Aucun logo"}
+              </p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                Glissez une image ici ou collez-la depuis le presse-papiers.
+              </p>
+              <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={uploadingLogo}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="h-4 w-4" /> Choisir un fichier
+                </Button>
+                {form.logo_url && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={uploadingLogo}
+                    onClick={removeLogo}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" /> Supprimer
+                  </Button>
+                )}
+              </div>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) uploadLogoFile(file);
+                e.target.value = "";
+              }}
+            />
+          </div>
         </div>
+
         <div>
           <Label className="mb-1.5 block text-sm font-semibold">Couleur de marque</Label>
-          <div className="flex items-center gap-3">
-            <input type="color" value={form.couleur} onChange={(e) => setForm({ ...form, couleur: e.target.value })} className="h-11 w-16 cursor-pointer rounded-xl border border-border bg-transparent" />
-            <Input value={form.couleur} onChange={(e) => setForm({ ...form, couleur: e.target.value })} className="h-11 rounded-xl" />
+          <p className="mb-3 text-xs text-muted-foreground">
+            Utilisée comme accent visuel dans la carte de fidélité de vos clients.
+          </p>
+          <div className="rounded-2xl border border-border/60 bg-muted/20 p-4">
+            <div className="flex items-center gap-4">
+              <div
+                className="h-16 w-16 flex-none rounded-2xl border border-border/60 shadow-soft"
+                style={{ backgroundColor: form.couleur }}
+                aria-label="Aperçu de la couleur"
+              />
+              <div className="flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <label className="relative h-10 w-10 flex-none cursor-pointer overflow-hidden rounded-lg border border-border">
+                    <input
+                      type="color"
+                      value={form.couleur}
+                      onChange={(e) => setForm({ ...form, couleur: e.target.value })}
+                      className="absolute inset-0 h-full w-full cursor-pointer border-0 bg-transparent p-0"
+                    />
+                  </label>
+                  <Input
+                    value={form.couleur}
+                    onChange={(e) => setForm({ ...form, couleur: e.target.value })}
+                    className="h-10 rounded-xl font-mono uppercase"
+                    maxLength={7}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="mt-4">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Suggestions
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {PRESET_COLORS.map((c) => {
+                  const active = c.toLowerCase() === form.couleur.toLowerCase();
+                  return (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => setForm({ ...form, couleur: c })}
+                      className={`h-8 w-8 rounded-full border-2 transition hover:scale-110 ${
+                        active ? "border-foreground ring-2 ring-foreground/20" : "border-border/60"
+                      }`}
+                      style={{ backgroundColor: c }}
+                      aria-label={`Couleur ${c}`}
+                    />
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </div>
