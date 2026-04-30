@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { LayoutGrid, CheckCircle2, Users, QrCode, Settings, CreditCard, LogOut, UserCircle } from "lucide-react";
+import { LayoutGrid, CheckCircle2, Users, QrCode, Settings, LogOut, UserCircle } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/dashboard")({
@@ -16,7 +16,6 @@ const NAV: readonly NavItem[] = [
   { to: "/dashboard/clients", icon: Users, label: "Clients" },
   { to: "/dashboard/qr", icon: QrCode, label: "QR code" },
   { to: "/dashboard/settings", icon: Settings, label: "Paramètres" },
-  { to: "/dashboard/subscription", icon: CreditCard, label: "Abonnement" },
   { to: "/dashboard/account", icon: UserCircle, label: "Mon compte" },
 ];
 
