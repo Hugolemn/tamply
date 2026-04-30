@@ -1,7 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { LayoutGrid, CheckCircle2, Users, QrCode, Settings, CreditCard, LogOut } from "lucide-react";
+import { LayoutGrid, CheckCircle2, Users, QrCode, Settings, CreditCard, LogOut, UserCircle } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/dashboard")({
@@ -17,6 +17,7 @@ const NAV: readonly NavItem[] = [
   { to: "/dashboard/qr", icon: QrCode, label: "QR code" },
   { to: "/dashboard/settings", icon: Settings, label: "Paramètres" },
   { to: "/dashboard/subscription", icon: CreditCard, label: "Abonnement" },
+  { to: "/dashboard/account", icon: UserCircle, label: "Mon compte" },
 ];
 
 function DashboardLayout() {
@@ -83,7 +84,7 @@ function DashboardLayout() {
       </main>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-6 border-t border-border/60 bg-background/95 backdrop-blur md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-30 grid grid-cols-7 border-t border-border/60 bg-background/95 backdrop-blur md:hidden">
         {NAV.map((n) => {
           const active = n.exact ? path === n.to : path.startsWith(n.to);
           return (
