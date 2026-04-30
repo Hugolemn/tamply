@@ -240,18 +240,18 @@ export function SettingsContent() {
             PNG, JPG, WEBP ou SVG, 5 Mo max.
           </p>
           <div className="flex flex-col items-center gap-4 rounded-2xl border border-border/60 bg-muted/20 p-5 sm:flex-row sm:items-center sm:gap-5">
-            <div className="grid h-20 w-20 flex-none place-items-center overflow-hidden rounded-2xl border border-border/60 bg-background">
-              {uploadingLogo ? (
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-              ) : form.logo_url ? (
-                <img src={form.logo_url} alt="Logo" className="h-full w-full object-contain" />
-              ) : (
-                <ImageIcon className="h-7 w-7 text-muted-foreground/60" />
-              )}
-            </div>
+            {(uploadingLogo || form.logo_url) && (
+              <div className="grid h-20 w-20 flex-none place-items-center overflow-hidden rounded-2xl border border-border/60 bg-background">
+                {uploadingLogo ? (
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                ) : (
+                  <img src={form.logo_url} alt="Logo" className="h-full w-full object-contain" />
+                )}
+              </div>
+            )}
             <div className="flex-1 text-center sm:text-left">
               <p className="text-sm font-semibold">
-                {form.logo_url ? "Logo en place" : "Aucun logo"}
+                {form.logo_url ? "Logo en place" : "Aucun logo importé"}
               </p>
               <div className="mt-2 flex flex-wrap justify-center gap-2 sm:justify-start">
                 <Button
