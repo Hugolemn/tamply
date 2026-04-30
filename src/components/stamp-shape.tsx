@@ -18,13 +18,17 @@ export const STAMP_SHAPES: { id: StampShape; label: string }[] = [
   { id: "hexagon", label: SHAPE_LABELS.hexagon },
 ];
 
-// CSS clip-paths for irregular shapes
-const CLIP_PATHS: Partial<Record<StampShape, string>> = {
+// SVG path data for the 100x100 viewBox of each non-rectangular shape.
+const SVG_PATHS: Record<"star" | "heart" | "hexagon", string> = {
+  // 5-point star, well-balanced
   star:
-    "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+    "M50 6 L61.8 38.2 L96 38.2 L68.1 58.6 L78.9 91 L50 70.6 L21.1 91 L31.9 58.6 L4 38.2 L38.2 38.2 Z",
+  // Classic heart, sits centered in the box
   heart:
-    "path('M 50 88 C 50 88 12 62 12 36 C 12 22 23 12 35 12 C 43 12 49 17 50 22 C 51 17 57 12 65 12 C 77 12 88 22 88 36 C 88 62 50 88 50 88 Z')",
-  hexagon: "polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%)",
+    "M50 86 C 18 64 6 46 6 30 C 6 18 16 8 28 8 C 38 8 46 14 50 22 C 54 14 62 8 72 8 C 84 8 94 18 94 30 C 94 46 82 64 50 86 Z",
+  // Flat-top hexagon
+  hexagon:
+    "M50 4 L91 27 L91 73 L50 96 L9 73 L9 27 Z",
 };
 
 interface ShapeBoxProps {
@@ -36,39 +40,53 @@ interface ShapeBoxProps {
 }
 
 /**
- * Single stamp slot. Uses clip-path for star/heart/hexagon, border-radius for rounded/circle.
- * Filled state: solid accent color. Empty state: muted with dashed border (rounded/circle only).
+ * Single stamp slot. Square/circle use a div + border. Star/heart/hexagon use an SVG
+ * background so the shape stays clean at any size. The emoji is rendered in a centered
+ * overlay so it never gets clipped by the shape edges.
  */
 export function ShapeBox({ shape, filled, color, children, className = "" }: ShapeBoxProps) {
-  const isClipped = shape === "star" || shape === "heart" || shape === "hexagon";
-  const radiusClass =
-    shape === "circle" ? "rounded-full" : shape === "rounded" ? "rounded-xl" : "";
+  const isSvg = shape === "star" || shape === "heart" || shape === "hexagon";
 
-  if (isClipped) {
+  if (isSvg) {
+    const path = SVG_PATHS[shape];
+    const muted = "color-mix(in oklab, var(--muted-foreground) 35%, transparent)";
     return (
-      <div
-        className={`relative aspect-square w-full ${className}`}
-        style={{ clipPath: CLIP_PATHS[shape], WebkitClipPath: CLIP_PATHS[shape] }}
-      >
-        <div
-          className="absolute inset-0 grid place-items-center text-base font-bold transition-all"
-          style={{
-            background: filled ? color : "color-mix(in oklab, var(--muted) 60%, transparent)",
-            color: filled ? "#0a0a0a" : "color-mix(in oklab, var(--muted-foreground) 80%, transparent)",
-          }}
+      <div className={`relative aspect-square w-full ${className}`}>
+        <svg
+          viewBox="0 0 100 100"
+          className="absolute inset-0 h-full w-full"
+          preserveAspectRatio="xMidYMid meet"
+          aria-hidden="true"
         >
-          {children}
-        </div>
+          <path
+            d={path}
+            fill={filled ? color : "transparent"}
+            stroke={filled ? color : muted}
+            strokeWidth={filled ? 0 : 3}
+            strokeDasharray={filled ? undefined : "5 4"}
+            strokeLinejoin="round"
+          />
+        </svg>
+        {children ? (
+          <div
+            className="absolute inset-0 grid place-items-center text-[55%] leading-none select-none"
+            style={{ color: filled ? "#0a0a0a" : "color-mix(in oklab, var(--muted-foreground) 80%, transparent)" }}
+          >
+            {children}
+          </div>
+        ) : null}
       </div>
     );
   }
 
+  // Rectangular shapes (rounded square / circle) — div with border
+  const radiusClass = shape === "circle" ? "rounded-full" : "rounded-xl";
   return (
     <div
-      className={`aspect-square w-full ${radiusClass} grid place-items-center text-base font-bold border-2 transition-all ${className}`}
+      className={`aspect-square w-full ${radiusClass} grid place-items-center text-[55%] leading-none border-2 transition-all ${className}`}
       style={{
         background: filled ? color : "transparent",
-        borderColor: filled ? color : "color-mix(in oklab, var(--border) 100%, transparent)",
+        borderColor: filled ? color : "color-mix(in oklab, var(--muted-foreground) 35%, transparent)",
         borderStyle: filled ? "solid" : "dashed",
         color: filled ? "#0a0a0a" : "color-mix(in oklab, var(--muted-foreground) 80%, transparent)",
       }}
