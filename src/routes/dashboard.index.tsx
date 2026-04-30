@@ -167,7 +167,7 @@ function OnboardingChecklist({
     {
       label: "Personnaliser votre établissement",
       done: Boolean(shop.logo_url) && Boolean(shop.description_recompense) && shop.nom.trim().length > 0,
-      to: "/dashboard/settings" as const,
+      to: "/dashboard/account" as const,
     },
     {
       label: "Afficher votre QR code au comptoir",
