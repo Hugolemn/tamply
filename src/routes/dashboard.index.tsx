@@ -211,7 +211,7 @@ function OnboardingChecklist({
 
       <div className="px-4 pt-3">
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-          <div className="h-full bg-secondary transition-all" style={{ width: `${pct}%` }} />
+          <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
         </div>
       </div>
 
@@ -225,7 +225,7 @@ function OnboardingChecklist({
             >
               <div className="flex items-center gap-3">
                 {s.done ? (
-                  <CheckCircle2 className="h-5 w-5 text-secondary" />
+                  <CheckCircle2 className="h-5 w-5 text-primary" />
                 ) : (
                   <Circle className="h-5 w-5 text-muted-foreground/60" />
                 )}
