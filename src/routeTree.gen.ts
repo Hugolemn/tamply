@@ -23,6 +23,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as DashboardValidationRouteImport } from './routes/dashboard.validation'
 import { Route as DashboardSubscriptionRouteImport } from './routes/dashboard.subscription'
+import { Route as DashboardStatsRouteImport } from './routes/dashboard.stats'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
 import { Route as DashboardQrRouteImport } from './routes/dashboard.qr'
 import { Route as DashboardClientsRouteImport } from './routes/dashboard.clients'
@@ -99,6 +100,11 @@ const DashboardSubscriptionRoute = DashboardSubscriptionRouteImport.update({
   path: '/subscription',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardStatsRoute = DashboardStatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/clients': typeof DashboardClientsRoute
   '/dashboard/qr': typeof DashboardQrRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/stats': typeof DashboardStatsRoute
   '/dashboard/subscription': typeof DashboardSubscriptionRoute
   '/dashboard/validation': typeof DashboardValidationRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/dashboard/clients': typeof DashboardClientsRoute
   '/dashboard/qr': typeof DashboardQrRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/stats': typeof DashboardStatsRoute
   '/dashboard/subscription': typeof DashboardSubscriptionRoute
   '/dashboard/validation': typeof DashboardValidationRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/dashboard/clients': typeof DashboardClientsRoute
   '/dashboard/qr': typeof DashboardQrRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/stats': typeof DashboardStatsRoute
   '/dashboard/subscription': typeof DashboardSubscriptionRoute
   '/dashboard/validation': typeof DashboardValidationRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/dashboard/clients'
     | '/dashboard/qr'
     | '/dashboard/settings'
+    | '/dashboard/stats'
     | '/dashboard/subscription'
     | '/dashboard/validation'
     | '/dashboard/'
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
     | '/dashboard/clients'
     | '/dashboard/qr'
     | '/dashboard/settings'
+    | '/dashboard/stats'
     | '/dashboard/subscription'
     | '/dashboard/validation'
     | '/dashboard'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/dashboard/clients'
     | '/dashboard/qr'
     | '/dashboard/settings'
+    | '/dashboard/stats'
     | '/dashboard/subscription'
     | '/dashboard/validation'
     | '/dashboard/'
@@ -368,6 +380,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardSubscriptionRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/stats': {
+      id: '/dashboard/stats'
+      path: '/stats'
+      fullPath: '/dashboard/stats'
+      preLoaderRoute: typeof DashboardStatsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/settings': {
       id: '/dashboard/settings'
       path: '/settings'
@@ -411,6 +430,7 @@ interface DashboardRouteChildren {
   DashboardClientsRoute: typeof DashboardClientsRoute
   DashboardQrRoute: typeof DashboardQrRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardStatsRoute: typeof DashboardStatsRoute
   DashboardSubscriptionRoute: typeof DashboardSubscriptionRoute
   DashboardValidationRoute: typeof DashboardValidationRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -421,6 +441,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardClientsRoute: DashboardClientsRoute,
   DashboardQrRoute: DashboardQrRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardStatsRoute: DashboardStatsRoute,
   DashboardSubscriptionRoute: DashboardSubscriptionRoute,
   DashboardValidationRoute: DashboardValidationRoute,
   DashboardIndexRoute: DashboardIndexRoute,
