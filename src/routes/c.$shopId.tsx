@@ -228,12 +228,28 @@ function Header({ shop }: { shop: Shop }) {
   );
 }
 
-function PhoneStep({ phone, setPhone, submit, submitting }: { phone: string; setPhone: (v: string) => void; submit: () => void; submitting: boolean; }) {
-  const ok = phone.trim().length >= 6;
+function PhoneStep({
+  shop, phone, setPhone, montant, setMontant, submit, submitting,
+}: {
+  shop: Shop;
+  phone: string; setPhone: (v: string) => void;
+  montant: string; setMontant: (v: string) => void;
+  submit: () => void; submitting: boolean;
+}) {
+  const isPoints = shop.loyalty_mode === "points";
+  const montantNum = Number(montant.replace(",", "."));
+  const montantOk = !isPoints || (Number.isFinite(montantNum) && montantNum > 0 && montantNum <= 100000);
+  const ok = phone.trim().length >= 6 && montantOk;
   return (
     <form onSubmit={(e) => { e.preventDefault(); if (ok && !submitting) submit(); }} className="mt-10 flex flex-1 flex-col">
-      <h2 className="text-center text-2xl font-extrabold">Entre ton numéro</h2>
-      <p className="mt-1 text-center text-sm text-muted-foreground">Pas de compte. Pas d'appli. Juste ton tampon.</p>
+      <h2 className="text-center text-2xl font-extrabold">
+        {isPoints ? "Ton numéro et ton montant" : "Entre ton numéro"}
+      </h2>
+      <p className="mt-1 text-center text-sm text-muted-foreground">
+        {isPoints
+          ? "Pas de compte. Pas d'appli. Juste tes points."
+          : "Pas de compte. Pas d'appli. Juste ton tampon."}
+      </p>
       <div className="relative mt-8">
         <Phone className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -243,6 +259,24 @@ function PhoneStep({ phone, setPhone, submit, submitting }: { phone: string; set
           className="h-16 rounded-2xl pl-12 text-xl font-bold shadow-card"
         />
       </div>
+      {isPoints && (
+        <div className="mt-4">
+          <div className="relative">
+            <Euro className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              inputMode="decimal"
+              value={montant}
+              onChange={(e) => setMontant(e.target.value.replace(/[^0-9.,]/g, ""))}
+              placeholder="Montant de ton achat"
+              className="h-16 rounded-2xl pl-12 text-xl font-bold shadow-card"
+            />
+          </div>
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            {shop.points_par_tranche ?? 1} pt(s) par tranche de {(shop.montant_tranche ?? 5).toFixed(2)} €
+          </p>
+        </div>
+      )}
       <div className="mt-auto pt-8">
         <Button type="submit" variant="cta" size="huge" disabled={!ok || submitting} className="w-full">
           {submitting ? "Envoi…" : "Valider"}
@@ -282,14 +316,16 @@ function WaitingStep() {
   );
 }
 
-function StampedStep({ shop, count, restart }: { shop: Shop; count: number; restart: () => void }) {
-  const total = shop.tampons_requis;
+function StampedStep({ shop, customer, restart }: { shop: Shop; customer: Customer; restart: () => void }) {
+  const isPoints = shop.loyalty_mode === "points";
+  const total = isPoints ? (shop.points_requis ?? 100) : shop.tampons_requis;
+  const count = isPoints ? customer.total_points : customer.total_tampons;
   const progress = Math.min(count, total);
   const remaining = Math.max(0, total - progress);
   return (
     <div className="mt-8 flex flex-1 flex-col">
       <p className="text-center text-sm font-semibold uppercase tracking-wider" style={{ color: shop.couleur }}>
-        +1 tampon ajouté
+        {isPoints ? "Points ajoutés !" : "+1 tampon ajouté"}
       </p>
       <h2 className="mt-1 text-center text-2xl font-semibold tracking-tight text-neutral-900">
         Merci pour ta visite 🎉
@@ -297,18 +333,30 @@ function StampedStep({ shop, count, restart }: { shop: Shop; count: number; rest
 
       <div className="mt-6 rounded-2xl border border-neutral-200 bg-white p-6 shadow-lg">
         <h3 className="text-base font-medium text-neutral-800">Votre prochaine récompense</h3>
-        <div className="mt-4">
-          <StampGrid
+        {isPoints ? (
+          <PointsBar
             total={total}
-            filled={progress}
-            emoji={shop.stamp_emoji || "🍟"}
+            current={progress}
             color={shop.couleur}
           />
-        </div>
+        ) : (
+          <div className="mt-4">
+            <StampGrid
+              total={total}
+              filled={progress}
+              emoji={shop.stamp_emoji || "🍟"}
+              color={shop.couleur}
+            />
+          </div>
+        )}
         <div className="mt-5 text-center">
-          <p className="text-base font-medium text-neutral-700">{progress} / {total} tampons</p>
+          <p className="text-base font-medium text-neutral-700">
+            {progress} / {total} {isPoints ? "points" : "tampons"}
+          </p>
           <p className="mt-1 text-sm text-neutral-500">
-            {remaining === 0 ? "Récompense débloquée !" : `Plus que ${remaining} pour ${shop.description_recompense.toLowerCase()}`}
+            {remaining === 0
+              ? "Récompense débloquée !"
+              : `Plus que ${remaining} ${isPoints ? "pts" : ""} pour ${shop.description_recompense.toLowerCase()}`}
           </p>
         </div>
       </div>
@@ -321,6 +369,20 @@ function StampedStep({ shop, count, restart }: { shop: Shop; count: number; rest
         >
           Terminé
         </Button>
+      </div>
+    </div>
+  );
+}
+
+function PointsBar({ total, current, color }: { total: number; current: number; color: string }) {
+  const pct = total > 0 ? Math.min(100, Math.round((current / total) * 100)) : 0;
+  return (
+    <div className="mt-4">
+      <div className="h-4 w-full overflow-hidden rounded-full bg-neutral-100">
+        <div
+          className="h-full rounded-full transition-all"
+          style={{ width: `${pct}%`, background: color }}
+        />
       </div>
     </div>
   );
