@@ -333,7 +333,7 @@ function Validation() {
                   </div>
                 </div>
 
-                <div className="grid gap-4 p-5 pl-7 md:grid-cols-[minmax(0,1fr)_220px] md:items-center">
+                <div className="grid gap-4 p-5 pl-7 md:grid-cols-[minmax(0,1fr)_260px] md:items-center">
                   <div className="flex min-w-0 items-start gap-4">
                     <div className="grid h-13 w-13 flex-none place-items-center rounded-2xl bg-gradient-cta shadow-soft">
                       <User className="h-6 w-6 text-foreground" />
@@ -376,14 +376,14 @@ function Validation() {
                     ) : (
                       <>
                         <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                          Nombre de tampons
+                          Nombre de tampons à ajouter
                         </div>
-                        <div className="mt-2 flex items-center gap-2">
+                        <div className="mt-2 flex items-center justify-between gap-2 rounded-2xl bg-background/80 p-1.5 shadow-card">
                           <button
                             type="button"
                             onClick={() => setNb(nbTampons - 1)}
                             disabled={nbTampons <= 1 || busy[r.id]}
-                            className="grid h-10 w-10 place-items-center rounded-xl border border-border/60 bg-background text-lg font-bold text-foreground shadow-card transition hover:bg-muted disabled:opacity-40"
+                            className="grid h-11 w-11 flex-none place-items-center rounded-xl bg-muted text-2xl font-bold text-foreground transition hover:bg-muted/70 disabled:opacity-40"
                             aria-label="Diminuer"
                           >
                             −
@@ -394,20 +394,34 @@ function Validation() {
                             max={50}
                             value={nbTampons}
                             onChange={(e) => setNb(parseInt(e.target.value, 10) || 1)}
-                            className="h-10 w-16 rounded-xl border border-border/60 bg-background text-center text-xl font-extrabold text-foreground shadow-card outline-none focus:ring-2 focus:ring-secondary"
+                            className="h-11 w-full min-w-0 border-0 bg-transparent text-center text-2xl font-extrabold text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                           />
                           <button
                             type="button"
                             onClick={() => setNb(nbTampons + 1)}
                             disabled={nbTampons >= 50 || busy[r.id]}
-                            className="grid h-10 w-10 place-items-center rounded-xl border border-border/60 bg-background text-lg font-bold text-foreground shadow-card transition hover:bg-muted disabled:opacity-40"
+                            className="grid h-11 w-11 flex-none place-items-center rounded-xl bg-secondary text-2xl font-bold text-secondary-foreground transition hover:opacity-90 disabled:opacity-40"
                             aria-label="Augmenter"
                           >
                             +
                           </button>
                         </div>
-                        <div className="mt-3 rounded-2xl bg-background/80 px-3 py-2 text-xs font-medium text-muted-foreground shadow-card">
-                          +{nbTampons} tampon{nbTampons > 1 ? "s" : ""} ajouté{nbTampons > 1 ? "s" : ""} après validation.
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {[1, 2, 3, 5, 10].map((n) => (
+                            <button
+                              key={n}
+                              type="button"
+                              onClick={() => setNb(n)}
+                              disabled={busy[r.id]}
+                              className={`rounded-full px-2.5 py-1 text-[11px] font-bold transition ${
+                                nbTampons === n
+                                  ? "bg-secondary text-secondary-foreground shadow-soft"
+                                  : "border border-border/60 bg-background/60 text-muted-foreground hover:text-foreground"
+                              }`}
+                            >
+                              ×{n}
+                            </button>
+                          ))}
                         </div>
                       </>
                     )}
