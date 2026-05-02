@@ -21,6 +21,7 @@ export type Database = {
           id: string
           numero_telephone: string
           shop_id: string
+          total_points: number
           total_recompenses: number
           total_tampons: number
         }
@@ -30,6 +31,7 @@ export type Database = {
           id?: string
           numero_telephone: string
           shop_id: string
+          total_points?: number
           total_recompenses?: number
           total_tampons?: number
         }
@@ -39,6 +41,7 @@ export type Database = {
           id?: string
           numero_telephone?: string
           shop_id?: string
+          total_points?: number
           total_recompenses?: number
           total_tampons?: number
         }
@@ -87,9 +90,13 @@ export type Database = {
           description_recompense: string
           id: string
           logo_url: string | null
+          loyalty_mode: string
+          montant_tranche: number
           nom: string
           owner_id: string
           owner_nom: string | null
+          points_par_tranche: number
+          points_requis: number
           qr_displayed_at: string | null
           stamp_emoji: string
           statut_abonnement: string
@@ -104,9 +111,13 @@ export type Database = {
           description_recompense?: string
           id?: string
           logo_url?: string | null
+          loyalty_mode?: string
+          montant_tranche?: number
           nom: string
           owner_id: string
           owner_nom?: string | null
+          points_par_tranche?: number
+          points_requis?: number
           qr_displayed_at?: string | null
           stamp_emoji?: string
           statut_abonnement?: string
@@ -121,9 +132,13 @@ export type Database = {
           description_recompense?: string
           id?: string
           logo_url?: string | null
+          loyalty_mode?: string
+          montant_tranche?: number
           nom?: string
           owner_id?: string
           owner_nom?: string | null
+          points_par_tranche?: number
+          points_requis?: number
           qr_displayed_at?: string | null
           stamp_emoji?: string
           statut_abonnement?: string
@@ -138,6 +153,7 @@ export type Database = {
           created_at: string
           customer_id: string
           id: string
+          montant_achat: number | null
           numero_telephone: string
           shop_id: string
           statut: Database["public"]["Enums"]["stamp_status"]
@@ -147,6 +163,7 @@ export type Database = {
           created_at?: string
           customer_id: string
           id?: string
+          montant_achat?: number | null
           numero_telephone: string
           shop_id: string
           statut?: Database["public"]["Enums"]["stamp_status"]
@@ -156,6 +173,7 @@ export type Database = {
           created_at?: string
           customer_id?: string
           id?: string
+          montant_achat?: number | null
           numero_telephone?: string
           shop_id?: string
           statut?: Database["public"]["Enums"]["stamp_status"]
