@@ -15,6 +15,10 @@ export interface Shop {
   trial_end: string;
   created_at: string;
   qr_displayed_at: string | null;
+  loyalty_mode: "tampons" | "points";
+  montant_tranche: number;
+  points_par_tranche: number;
+  points_requis: number;
 }
 
 export function useShop() {

@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import confetti from "canvas-confetti";
-import { Loader2, Phone } from "lucide-react";
+import { Loader2, Phone, Euro } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/c/$shopId")({
@@ -26,8 +26,12 @@ interface Shop {
   id: string; nom: string; logo_url: string | null; couleur: string;
   description_recompense: string; tampons_requis: number; stamp_emoji: string;
   card_template?: string | null;
+  loyalty_mode?: "tampons" | "points";
+  montant_tranche?: number;
+  points_par_tranche?: number;
+  points_requis?: number;
 }
-interface Customer { id: string; total_tampons: number; total_recompenses: number; }
+interface Customer { id: string; total_tampons: number; total_points: number; total_recompenses: number; }
 
 type Step = "phone" | "waiting" | "stamped" | "reward" | "refused" | "timeout";
 
@@ -36,6 +40,7 @@ function ClientFlow() {
   const [shop, setShop] = useState<Shop | null>(null);
   const [shopErr, setShopErr] = useState(false);
   const [phone, setPhone] = useState("");
+  const [montant, setMontant] = useState("");
   const [step, setStep] = useState<Step>("phone");
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [reqId, setReqId] = useState<string | null>(null);
@@ -47,7 +52,7 @@ function ClientFlow() {
     (async () => {
       const { data, error } = await supabase
         .from("shops")
-        .select("id, nom, logo_url, couleur, description_recompense, tampons_requis, stamp_emoji, card_template")
+        .select("id, nom, logo_url, couleur, description_recompense, tampons_requis, stamp_emoji, card_template, loyalty_mode, montant_tranche, points_par_tranche, points_requis")
         .eq("id", shopId)
         .maybeSingle();
       if (error || !data) setShopErr(true);
@@ -69,11 +74,11 @@ function ClientFlow() {
           if (row.statut === "valide") {
             // Reload customer
             const { data: c } = await supabase
-              .from("customers").select("id, total_tampons, total_recompenses").eq("id", customer.id).maybeSingle();
+              .from("customers").select("id, total_tampons, total_points, total_recompenses").eq("id", customer.id).maybeSingle();
             if (c) setCustomer(c as Customer);
             const updated = (c as Customer) ?? customer;
-            // Reward attribution = total_recompenses augmenté OU compteur retombé à 0
-            if ((c?.total_recompenses ?? customer.total_recompenses) > customer.total_recompenses || updated.total_tampons === 0) {
+            // Reward attribution = total_recompenses augmenté
+            if ((c?.total_recompenses ?? customer.total_recompenses) > customer.total_recompenses) {
               setStep("reward");
               setTimeout(() => fireConfetti(), 50);
             } else {
@@ -109,11 +114,16 @@ function ClientFlow() {
     if (!shop) return;
     const cleaned = phone.trim();
     if (cleaned.length < 6 || cleaned.length > 20) { return; }
+    const isPoints = shop.loyalty_mode === "points";
+    const montantNum = isPoints ? Number(montant.replace(",", ".")) : null;
+    if (isPoints && (!montantNum || montantNum <= 0 || montantNum > 100000)) {
+      return;
+    }
     setSubmitting(true);
 
     // Find existing or create
     const { data: existing } = await supabase
-      .from("customers").select("id, total_tampons, total_recompenses")
+      .from("customers").select("id, total_tampons, total_points, total_recompenses")
       .eq("shop_id", shop.id).eq("numero_telephone", cleaned).maybeSingle();
 
     let cust = existing as Customer | null;
@@ -121,14 +131,19 @@ function ClientFlow() {
       const { data: created, error } = await supabase
         .from("customers")
         .insert({ shop_id: shop.id, numero_telephone: cleaned })
-        .select("id, total_tampons, total_recompenses").single();
+        .select("id, total_tampons, total_points, total_recompenses").single();
       if (error || !created) { setSubmitting(false); return; }
       cust = created as Customer;
     }
 
     const { data: req, error: reqErr } = await supabase
       .from("stamp_requests")
-      .insert({ shop_id: shop.id, customer_id: cust.id, numero_telephone: cleaned })
+      .insert({
+        shop_id: shop.id,
+        customer_id: cust.id,
+        numero_telephone: cleaned,
+        montant_achat: isPoints ? montantNum : null,
+      })
       .select("id").single();
     setSubmitting(false);
     if (reqErr || !req) return;
@@ -137,7 +152,7 @@ function ClientFlow() {
     setStep("waiting");
   };
 
-  const restart = () => { setStep("phone"); setPhone(""); setCustomer(null); setReqId(null); };
+  const restart = () => { setStep("phone"); setPhone(""); setMontant(""); setCustomer(null); setReqId(null); };
 
   if (shopErr) {
     return (
@@ -158,11 +173,16 @@ function ClientFlow() {
     <Wrapper>
       <Header shop={shop} />
       {step === "phone" && (
-        <PhoneStep phone={phone} setPhone={setPhone} submit={submitPhone} submitting={submitting} />
+        <PhoneStep
+          shop={shop}
+          phone={phone} setPhone={setPhone}
+          montant={montant} setMontant={setMontant}
+          submit={submitPhone} submitting={submitting}
+        />
       )}
       {step === "waiting" && <WaitingStep />}
       {step === "stamped" && customer && (
-        <StampedStep shop={shop} count={customer.total_tampons} restart={restart} />
+        <StampedStep shop={shop} customer={customer} restart={restart} />
       )}
       {step === "reward" && (
         <RewardStep shop={shop} restart={restart} />
@@ -208,12 +228,28 @@ function Header({ shop }: { shop: Shop }) {
   );
 }
 
-function PhoneStep({ phone, setPhone, submit, submitting }: { phone: string; setPhone: (v: string) => void; submit: () => void; submitting: boolean; }) {
-  const ok = phone.trim().length >= 6;
+function PhoneStep({
+  shop, phone, setPhone, montant, setMontant, submit, submitting,
+}: {
+  shop: Shop;
+  phone: string; setPhone: (v: string) => void;
+  montant: string; setMontant: (v: string) => void;
+  submit: () => void; submitting: boolean;
+}) {
+  const isPoints = shop.loyalty_mode === "points";
+  const montantNum = Number(montant.replace(",", "."));
+  const montantOk = !isPoints || (Number.isFinite(montantNum) && montantNum > 0 && montantNum <= 100000);
+  const ok = phone.trim().length >= 6 && montantOk;
   return (
     <form onSubmit={(e) => { e.preventDefault(); if (ok && !submitting) submit(); }} className="mt-10 flex flex-1 flex-col">
-      <h2 className="text-center text-2xl font-extrabold">Entre ton numéro</h2>
-      <p className="mt-1 text-center text-sm text-muted-foreground">Pas de compte. Pas d'appli. Juste ton tampon.</p>
+      <h2 className="text-center text-2xl font-extrabold">
+        {isPoints ? "Ton numéro et ton montant" : "Entre ton numéro"}
+      </h2>
+      <p className="mt-1 text-center text-sm text-muted-foreground">
+        {isPoints
+          ? "Pas de compte. Pas d'appli. Juste tes points."
+          : "Pas de compte. Pas d'appli. Juste ton tampon."}
+      </p>
       <div className="relative mt-8">
         <Phone className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <Input
@@ -223,6 +259,24 @@ function PhoneStep({ phone, setPhone, submit, submitting }: { phone: string; set
           className="h-16 rounded-2xl pl-12 text-xl font-bold shadow-card"
         />
       </div>
+      {isPoints && (
+        <div className="mt-4">
+          <div className="relative">
+            <Euro className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              type="text"
+              inputMode="decimal"
+              value={montant}
+              onChange={(e) => setMontant(e.target.value.replace(/[^0-9.,]/g, ""))}
+              placeholder="Montant de ton achat"
+              className="h-16 rounded-2xl pl-12 text-xl font-bold shadow-card"
+            />
+          </div>
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            {shop.points_par_tranche ?? 1} pt(s) par tranche de {(shop.montant_tranche ?? 5).toFixed(2)} €
+          </p>
+        </div>
+      )}
       <div className="mt-auto pt-8">
         <Button type="submit" variant="cta" size="huge" disabled={!ok || submitting} className="w-full">
           {submitting ? "Envoi…" : "Valider"}
@@ -262,14 +316,16 @@ function WaitingStep() {
   );
 }
 
-function StampedStep({ shop, count, restart }: { shop: Shop; count: number; restart: () => void }) {
-  const total = shop.tampons_requis;
+function StampedStep({ shop, customer, restart }: { shop: Shop; customer: Customer; restart: () => void }) {
+  const isPoints = shop.loyalty_mode === "points";
+  const total = isPoints ? (shop.points_requis ?? 100) : shop.tampons_requis;
+  const count = isPoints ? customer.total_points : customer.total_tampons;
   const progress = Math.min(count, total);
   const remaining = Math.max(0, total - progress);
   return (
     <div className="mt-8 flex flex-1 flex-col">
       <p className="text-center text-sm font-semibold uppercase tracking-wider" style={{ color: shop.couleur }}>
-        +1 tampon ajouté
+        {isPoints ? "Points ajoutés !" : "+1 tampon ajouté"}
       </p>
       <h2 className="mt-1 text-center text-2xl font-semibold tracking-tight text-neutral-900">
         Merci pour ta visite 🎉
@@ -277,18 +333,30 @@ function StampedStep({ shop, count, restart }: { shop: Shop; count: number; rest
 
       <div className="mt-6 rounded-2xl border border-neutral-200 bg-white p-6 shadow-lg">
         <h3 className="text-base font-medium text-neutral-800">Votre prochaine récompense</h3>
-        <div className="mt-4">
-          <StampGrid
+        {isPoints ? (
+          <PointsBar
             total={total}
-            filled={progress}
-            emoji={shop.stamp_emoji || "🍟"}
+            current={progress}
             color={shop.couleur}
           />
-        </div>
+        ) : (
+          <div className="mt-4">
+            <StampGrid
+              total={total}
+              filled={progress}
+              emoji={shop.stamp_emoji || "🍟"}
+              color={shop.couleur}
+            />
+          </div>
+        )}
         <div className="mt-5 text-center">
-          <p className="text-base font-medium text-neutral-700">{progress} / {total} tampons</p>
+          <p className="text-base font-medium text-neutral-700">
+            {progress} / {total} {isPoints ? "points" : "tampons"}
+          </p>
           <p className="mt-1 text-sm text-neutral-500">
-            {remaining === 0 ? "Récompense débloquée !" : `Plus que ${remaining} pour ${shop.description_recompense.toLowerCase()}`}
+            {remaining === 0
+              ? "Récompense débloquée !"
+              : `Plus que ${remaining} ${isPoints ? "pts" : ""} pour ${shop.description_recompense.toLowerCase()}`}
           </p>
         </div>
       </div>
@@ -301,6 +369,20 @@ function StampedStep({ shop, count, restart }: { shop: Shop; count: number; rest
         >
           Terminé
         </Button>
+      </div>
+    </div>
+  );
+}
+
+function PointsBar({ total, current, color }: { total: number; current: number; color: string }) {
+  const pct = total > 0 ? Math.min(100, Math.round((current / total) * 100)) : 0;
+  return (
+    <div className="mt-4">
+      <div className="h-4 w-full overflow-hidden rounded-full bg-neutral-100">
+        <div
+          className="h-full rounded-full transition-all"
+          style={{ width: `${pct}%`, background: color }}
+        />
       </div>
     </div>
   );

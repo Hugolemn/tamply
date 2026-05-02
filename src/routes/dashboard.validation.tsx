@@ -16,6 +16,7 @@ interface PendingReq {
   numero_telephone: string;
   created_at: string;
   customer_id: string;
+  montant_achat: number | null;
 }
 
 function Validation() {
@@ -182,7 +183,7 @@ function Validation() {
     const load = async () => {
       const { data } = await supabase
         .from("stamp_requests")
-        .select("id, numero_telephone, created_at, customer_id")
+        .select("id, numero_telephone, created_at, customer_id, montant_achat")
         .eq("shop_id", shop.id)
         .eq("statut", "en_attente")
         .order("created_at", { ascending: true });
@@ -229,13 +230,16 @@ function Validation() {
   };
 
   if (!shop) return null;
+  const isPoints = (shop as any).loyalty_mode === "points";
+  const montantTranche = Number((shop as any).montant_tranche ?? 5);
+  const pointsParTranche = Number((shop as any).points_par_tranche ?? 1);
 
   return (
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-extrabold">
-            Tampons à valider
+            {isPoints ? "Demandes à valider" : "Tampons à valider"}
             {requests.length > 0 && (
               <span className="ml-2 inline-flex items-center justify-center rounded-full bg-secondary px-2.5 py-0.5 text-sm font-extrabold text-secondary-foreground align-middle">
                 {requests.length}
@@ -313,6 +317,17 @@ function Validation() {
                     Demande à {new Date(r.created_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
                   </div>
                 </div>
+                {isPoints && r.montant_achat != null && (
+                  <div className="text-right">
+                    <div className="text-xs uppercase tracking-wider text-muted-foreground">Montant</div>
+                    <div className="mt-0.5 text-2xl font-extrabold tracking-tight text-foreground">
+                      {Number(r.montant_achat).toFixed(2)} €
+                    </div>
+                    <div className="mt-1 text-xs font-semibold text-secondary">
+                      = {Math.floor(Number(r.montant_achat) / Math.max(0.01, montantTranche)) * pointsParTranche} pts
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="mt-4 grid grid-cols-2 gap-3">
                 <Button

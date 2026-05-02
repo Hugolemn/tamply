@@ -11,13 +11,15 @@ export const Route = createFileRoute("/dashboard/clients")({
 
 interface Customer {
   id: string; numero_telephone: string; total_tampons: number;
-  total_recompenses: number; derniere_visite: string | null; created_at: string;
+  total_points: number; total_recompenses: number;
+  derniere_visite: string | null; created_at: string;
 }
 
 function Clients() {
   const { shop } = useShop();
   const [list, setList] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
+  const isPoints = (shop as any)?.loyalty_mode === "points";
 
   useEffect(() => {
     if (!shop) return;
@@ -46,7 +48,7 @@ function Clients() {
             <thead className="bg-muted/50 text-xs uppercase tracking-wider text-muted-foreground">
               <tr>
                 <th className="px-4 py-3 text-left">Numéro</th>
-                <th className="px-4 py-3 text-center">Tampons</th>
+                <th className="px-4 py-3 text-center">{isPoints ? "Points" : "Tampons"}</th>
                 <th className="px-4 py-3 text-center hidden sm:table-cell">Récompenses</th>
                 <th className="px-4 py-3 text-right hidden sm:table-cell">Dernière visite</th>
               </tr>
@@ -56,7 +58,9 @@ function Clients() {
                 <tr key={c.id} className="border-t border-border/60">
                   <td className="px-4 py-3 font-semibold">{c.numero_telephone}</td>
                   <td className="px-4 py-3 text-center">
-                    <span className="rounded-full bg-primary/30 px-2.5 py-1 font-bold">{c.total_tampons}</span>
+                    <span className="rounded-full bg-primary/30 px-2.5 py-1 font-bold">
+                      {isPoints ? c.total_points : c.total_tampons}
+                    </span>
                   </td>
                   <td className="px-4 py-3 text-center hidden sm:table-cell">
                     <span className="text-secondary font-bold">🎁 {c.total_recompenses}</span>

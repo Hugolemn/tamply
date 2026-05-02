@@ -43,6 +43,7 @@ function Overview() {
 
   const trialDays = Math.max(0, Math.ceil((new Date(shop.trial_end).getTime() - Date.now()) / 86400000));
   const isEmpty = !statsLoading && stats.clients === 0;
+  const isPoints = (shop as any).loyalty_mode === "points";
 
   return (
     <div className="space-y-6">
@@ -82,7 +83,7 @@ function Overview() {
         ) : (
           <>
             <StatCard icon={Users} label="Clients" value={stats.clients} />
-            <StatCard icon={CheckCircle2} label="Tampons aujourd'hui" value={stats.tamponsAujourdhui} />
+            <StatCard icon={CheckCircle2} label={isPoints ? "Validations aujourd'hui" : "Tampons aujourd'hui"} value={stats.tamponsAujourdhui} />
             <StatCard icon={Gift} label="Récompenses ce mois" value={stats.recompensesMois} />
             <StatCard icon={Calendar} label="Inscrit le" value={new Date(shop.created_at).toLocaleDateString("fr-FR")} />
           </>
@@ -181,7 +182,7 @@ function OnboardingChecklist({
       to: "/dashboard/qr" as const,
     },
     {
-      label: "Valider votre premier tampon",
+      label: "Valider votre première demande",
       done: stats.tamponsAujourdhui > 0,
       to: "/dashboard/validation" as const,
     },
