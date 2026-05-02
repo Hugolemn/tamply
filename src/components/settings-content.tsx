@@ -55,7 +55,18 @@ const PRESET_COLORS = [
 
 export function SettingsContent() {
   const { shop, refresh } = useShop();
-  const [form, setForm] = useState({ nom: "", description_recompense: "", tampons_requis: 10, couleur: "#FFD700", logo_url: "", stamp_emoji: "🍟" });
+  const [form, setForm] = useState({
+    nom: "",
+    description_recompense: "",
+    tampons_requis: 10,
+    couleur: "#FFD700",
+    logo_url: "",
+    stamp_emoji: "🍟",
+    loyalty_mode: "tampons" as "tampons" | "points",
+    montant_tranche: 5,
+    points_par_tranche: 1,
+    points_requis: 100,
+  });
   const [saving, setSaving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -123,6 +134,10 @@ export function SettingsContent() {
       couleur: shop.couleur,
       logo_url: shop.logo_url ?? "",
       stamp_emoji: (shop as any).stamp_emoji ?? "🍟",
+      loyalty_mode: ((shop as any).loyalty_mode ?? "tampons") as "tampons" | "points",
+      montant_tranche: Number((shop as any).montant_tranche ?? 5),
+      points_par_tranche: Number((shop as any).points_par_tranche ?? 1),
+      points_requis: Number((shop as any).points_requis ?? 100),
     });
   }, [shop]);
 
@@ -136,6 +151,10 @@ export function SettingsContent() {
       couleur: form.couleur,
       logo_url: form.logo_url.trim() || null,
       stamp_emoji: form.stamp_emoji || "🍟",
+      loyalty_mode: form.loyalty_mode,
+      montant_tranche: Math.max(0.5, Math.min(1000, Number(form.montant_tranche) || 5)),
+      points_par_tranche: Math.max(1, Math.min(1000, Number(form.points_par_tranche) || 1)),
+      points_requis: Math.max(1, Math.min(100000, Number(form.points_requis) || 100)),
     }).eq("id", shop.id);
     setSaving(false);
     if (error) { toast.error(error.message); return; }
