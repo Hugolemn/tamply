@@ -1,7 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 import logo from "@/assets/logo.png";
+import { getShopContact } from "@/server/shop-contact.functions";
 
 export const Route = createFileRoute("/confidentialite")({
+  validateSearch: (search: Record<string, unknown>) =>
+    z.object({ shop: z.string().uuid().optional() }).parse(search),
   head: () => ({
     meta: [
       { title: "Politique de confidentialité — Tamply" },
@@ -15,6 +20,18 @@ export const Route = createFileRoute("/confidentialite")({
 });
 
 function ConfidentialitePage() {
+  const { shop: shopId } = Route.useSearch();
+  const [contact, setContact] = useState<{ nom: string; email: string | null } | null>(null);
+
+  useEffect(() => {
+    if (!shopId) { setContact(null); return; }
+    let cancelled = false;
+    getShopContact({ data: { shopId } })
+      .then((res) => { if (!cancelled) setContact(res); })
+      .catch(() => { if (!cancelled) setContact(null); });
+    return () => { cancelled = true; };
+  }, [shopId]);
+
   return (
     <div className="min-h-screen bg-background">
       <LegalHeader />
@@ -60,16 +77,28 @@ function ConfidentialitePage() {
             Tout client peut demander la <strong>consultation</strong>, la <strong>modification</strong> ou
             la <strong>suppression</strong> de ses données :
           </p>
-          <ul className="mt-3 list-disc space-y-1 pl-5">
-            <li>en contactant directement le commerçant auprès duquel il a scanné le QR code,</li>
-            <li>
-              ou en envoyant un email à{" "}
-              <a href="mailto:contact@tamply.app" className="font-medium text-foreground underline">
-                contact@tamply.app
-              </a>
-              .
-            </li>
-          </ul>
+          {contact ? (
+            <div className="mt-3 rounded-lg border border-border/60 bg-muted/30 p-4">
+              <p className="text-sm text-foreground">
+                Contactez le commerçant <strong>{contact.nom}</strong>
+                {contact.email ? (
+                  <>
+                    {" "}à l'adresse{" "}
+                    <a href={`mailto:${contact.email}`} className="font-medium underline">
+                      {contact.email}
+                    </a>
+                    .
+                  </>
+                ) : (
+                  <>.</>
+                )}
+              </p>
+            </div>
+          ) : (
+            <p className="mt-3">
+              Contactez directement le commerçant dont vous avez scanné le QR code.
+            </p>
+          )}
         </Section>
 
         <Section title="6. Sécurité">
