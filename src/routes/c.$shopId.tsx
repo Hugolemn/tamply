@@ -288,7 +288,7 @@ function PhoneStep({
           <br />
           En continuant, tu acceptes notre{" "}
           <a
-            href="/confidentialite"
+            href={`/confidentialite?shop=${shop?.id ?? shopId}`}
             target="_blank"
             rel="noopener noreferrer"
             className="underline hover:text-foreground"
