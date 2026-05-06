@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, Store, UtensilsCrossed, Sandwich, Beer, Truck, IceCream, Menu, X, Scissors, Flower2, Dumbbell, ShoppingBag } from "lucide-react";
+import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, Store, UtensilsCrossed, Menu, X, Scissors, Dumbbell, ShoppingBag } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { useRevealOnScroll } from "@/hooks/use-reveal-on-scroll";
 
@@ -457,16 +457,31 @@ function Pricing() {
 
 function ForWho() {
   const trades = [
-    { icon: UtensilsCrossed, label: "Restaurants" },
-    { icon: Sandwich, label: "Sandwicheries" },
-    { icon: Beer, label: "Brasseries & bars" },
-    { icon: Coffee, label: "Cafés & salons de thé" },
-    { icon: Truck, label: "Food trucks" },
-    { icon: IceCream, label: "Glaciers & friteries" },
-    { icon: Scissors, label: "Salons de coiffure & beauté" },
-    { icon: Flower2, label: "Fleuristes" },
-    { icon: ShoppingBag, label: "Commerces de proximité" },
-    { icon: Dumbbell, label: "Studios sport & bien-être" },
+    {
+      icon: UtensilsCrossed,
+      label: "Restauration",
+      desc: "Restaurants, sandwicheries, friteries, food trucks, glaciers…",
+    },
+    {
+      icon: Coffee,
+      label: "Cafés & bars",
+      desc: "Cafés, salons de thé, brasseries, bars à vin…",
+    },
+    {
+      icon: Scissors,
+      label: "Beauté & bien-être",
+      desc: "Coiffure, barbier, esthétique, spa, ongleries…",
+    },
+    {
+      icon: Dumbbell,
+      label: "Sport & loisirs",
+      desc: "Studios de yoga, salles de sport, clubs, cours collectifs…",
+    },
+    {
+      icon: ShoppingBag,
+      label: "Commerces de proximité",
+      desc: "Fleuristes, boulangeries, épiceries, boutiques de quartier…",
+    },
   ];
   return (
     <section id="pour-qui" className="bg-muted/40 py-20">
@@ -478,19 +493,22 @@ function ForWho() {
           </div>
           <h2 className="text-3xl font-extrabold md:text-4xl">Conçu pour votre métier</h2>
           <p className="mt-3 text-muted-foreground">
-            Horeca, beauté, bien-être, commerces de quartier… Tamply s'adapte à tous les établissements où vos clients reviennent.
+            Tamply s'adapte à tous les établissements où vos clients reviennent — quel que soit votre secteur.
           </p>
         </div>
-        <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {trades.map((t) => (
             <div
               key={t.label}
-              className="flex flex-col items-center gap-3 rounded-2xl border border-border/60 bg-card p-6 text-center shadow-card transition-all hover:-translate-y-0.5 hover:shadow-soft"
+              className="flex flex-col items-start gap-3 rounded-2xl border border-border/60 bg-card p-6 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-soft"
             >
               <div className="grid h-12 w-12 place-items-center rounded-xl bg-gradient-cta">
                 <t.icon className="h-6 w-6 text-foreground" />
               </div>
-              <div className="text-sm font-bold">{t.label}</div>
+              <div>
+                <div className="text-base font-bold">{t.label}</div>
+                <p className="mt-1 text-sm text-muted-foreground">{t.desc}</p>
+              </div>
             </div>
           ))}
         </div>
