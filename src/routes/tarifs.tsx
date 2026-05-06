@@ -151,7 +151,6 @@ function PricingCard() {
     { label: "QR code unique pour votre établissement" },
     { label: "Validation des tampons en temps réel" },
     { label: "Tableau de bord mobile et desktop" },
-    { label: "SMS de récompense", soon: true },
     { label: "Récompense personnalisable (ex : à 10 tampons)" },
     { label: "Aucune app à télécharger pour vos clients" },
     { label: "Conforme RGPD" },
