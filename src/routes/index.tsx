@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, Store, UtensilsCrossed, Menu, X, Scissors, Dumbbell, ShoppingBag } from "lucide-react";
+import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, Store, UtensilsCrossed, Menu, X, Scissors, Dumbbell, ShoppingBag, Sparkle } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { useRevealOnScroll } from "@/hooks/use-reveal-on-scroll";
 
@@ -481,6 +481,11 @@ function ForWho() {
       icon: ShoppingBag,
       label: "Commerces de proximité",
       desc: "Fleuristes, boulangeries, épiceries, boutiques de quartier…",
+    },
+    {
+      icon: Sparkle,
+      label: "Services & artisans",
+      desc: "Pressings, cordonneries, ateliers, lavages auto, toiletteurs…",
     },
   ];
   return (
