@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useShop } from "@/lib/use-shop";
 import { Button } from "@/components/ui/button";
-import { Check, X, Inbox, Volume2, VolumeX, Sparkles, Bell, BellOff, Clock, User, Receipt, Plus, Minus } from "lucide-react";
+import { Check, X, Inbox, Volume2, VolumeX, Sparkles, Bell, BellOff, Clock, User, Receipt, Plus, Minus, QrCode, Users, Share2, CheckCircle2, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -282,18 +282,7 @@ function Validation() {
           <Skeleton className="h-32 w-full rounded-2xl" />
         </div>
       ) : requests.length === 0 ? (
-        <div className="rounded-3xl border-2 border-dashed border-border bg-gradient-hero p-10 text-center shadow-card">
-          <div className="relative mx-auto h-16 w-16">
-            <div className="absolute inset-0 animate-ping rounded-2xl bg-primary/25" />
-            <div className="absolute inset-0 grid place-items-center rounded-2xl bg-gradient-cta shadow-soft">
-              <Inbox className="h-8 w-8 text-foreground" />
-            </div>
-          </div>
-          <div className="mt-5 text-lg font-extrabold">En attente de demandes</div>
-          <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-            Cette page se met à jour automatiquement dès qu'un client scanne votre QR code.
-          </p>
-        </div>
+        <EmptyValidation shopId={shop.id} shopName={shop.nom} />
       ) : (
         <div className="space-y-3">
           {requests.map((r) => {
@@ -457,6 +446,105 @@ function Validation() {
           })}
         </div>
       )}
+    </div>
+  );
+}
+
+function EmptyValidation({ shopId, shopName }: { shopId: string; shopName: string }) {
+  const url = typeof window !== "undefined" ? `${window.location.origin}/c/${shopId}` : "";
+
+  const share = async () => {
+    const text = `Scannez pour gagner vos tampons chez ${shopName} : ${url}`;
+    try {
+      if (typeof navigator !== "undefined" && (navigator as any).share) {
+        await (navigator as any).share({ title: shopName, text, url });
+        return;
+      }
+      if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        toast.success("Lien copié dans le presse-papier ✓");
+        return;
+      }
+    } catch {
+      // user cancelled — silent
+    }
+  };
+
+  const cards: Array<{
+    icon: React.ReactNode;
+    title: string;
+    desc: string;
+    to?: string;
+    onClick?: () => void;
+  }> = [
+    {
+      icon: <QrCode className="h-5 w-5" />,
+      title: "Afficher mon QR code au comptoir",
+      desc: "Imprimez ou affichez votre QR code pour vos clients.",
+      to: "/dashboard/qr",
+    },
+    {
+      icon: <Users className="h-5 w-5" />,
+      title: "Voir mes clients",
+      desc: "Consultez la liste de vos clients fidèles.",
+      to: "/dashboard/clients",
+    },
+    {
+      icon: <Share2 className="h-5 w-5" />,
+      title: "Partager mon lien par SMS",
+      desc: "Envoyez votre lien fidélité en quelques secondes.",
+      onClick: share,
+    },
+  ];
+
+  return (
+    <div className="space-y-5">
+      <div className="rounded-3xl border-2 border-dashed border-border bg-gradient-hero p-8 text-center shadow-card">
+        <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gradient-cta shadow-soft">
+          <CheckCircle2 className="h-7 w-7 text-foreground" />
+        </div>
+        <h2 className="mt-4 text-xl font-extrabold">
+          Prêt à recevoir vos premiers tampons ! ✅
+        </h2>
+        <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+          Cette page se met à jour automatiquement dès qu'un client scanne votre QR code.
+        </p>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        {cards.map((c) => {
+          const inner = (
+            <div className="group flex h-full items-start gap-3 rounded-2xl border border-border/60 bg-card p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-soft">
+              <div className="grid h-10 w-10 flex-none place-items-center rounded-xl bg-gradient-cta text-foreground shadow-soft">
+                {c.icon}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-1 text-sm font-extrabold">
+                  <span className="truncate">{c.title}</span>
+                  <ChevronRight className="h-4 w-4 flex-none text-muted-foreground transition group-hover:translate-x-0.5 group-hover:text-foreground" />
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">{c.desc}</p>
+              </div>
+            </div>
+          );
+          if (c.to) {
+            return (
+              <Link key={c.title} to={c.to} className="block">
+                {inner}
+              </Link>
+            );
+          }
+          return (
+            <button key={c.title} type="button" onClick={c.onClick} className="block w-full">
+              {inner}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="rounded-2xl bg-accent p-4 text-sm">
+        <b>💡 Astuce :</b> montrez votre QR code à vos clients en caisse et invitez-les à scanner — les premières demandes arrivent en quelques secondes.
+      </div>
     </div>
   );
 }
