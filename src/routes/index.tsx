@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, Store, UtensilsCrossed, Sandwich, Beer, Truck, IceCream, Menu, X } from "lucide-react";
+import { Check, Smartphone, Zap, RefreshCw, Sparkles, Play, QrCode, CheckCircle2, Gift, Coffee, Store, UtensilsCrossed, Sandwich, Beer, Truck, IceCream, Menu, X, Scissors, Flower2, Dumbbell, ShoppingBag } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { useRevealOnScroll } from "@/hooks/use-reveal-on-scroll";
 
@@ -463,6 +463,10 @@ function ForWho() {
     { icon: Coffee, label: "Cafés & salons de thé" },
     { icon: Truck, label: "Food trucks" },
     { icon: IceCream, label: "Glaciers & friteries" },
+    { icon: Scissors, label: "Salons de coiffure & beauté" },
+    { icon: Flower2, label: "Fleuristes" },
+    { icon: ShoppingBag, label: "Commerces de proximité" },
+    { icon: Dumbbell, label: "Studios sport & bien-être" },
   ];
   return (
     <section id="pour-qui" className="bg-muted/40 py-20">
@@ -470,11 +474,11 @@ function ForWho() {
         <div className="mx-auto max-w-2xl text-center">
           <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background px-4 py-1.5 text-xs font-semibold text-muted-foreground shadow-card">
             <Store className="h-3.5 w-3.5 text-tamply-red" />
-            Pensé pour l'Horeca
+            Pensé pour les commerces de proximité
           </div>
           <h2 className="text-3xl font-extrabold md:text-4xl">Conçu pour votre métier</h2>
           <p className="mt-3 text-muted-foreground">
-            Tamply s'adapte à tous les commerces où vos clients reviennent — du comptoir au food truck.
+            Horeca, beauté, bien-être, commerces de quartier… Tamply s'adapte à tous les établissements où vos clients reviennent.
           </p>
         </div>
         <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
