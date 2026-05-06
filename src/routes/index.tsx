@@ -8,19 +8,19 @@ import { useRevealOnScroll } from "@/hooks/use-reveal-on-scroll";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Tamply — La carte de fidélité digitale pour l'Horeca" },
+      { title: "Tamply — La carte de fidélité digitale pour les commerces de proximité" },
       {
         name: "description",
         content:
-          "Restaurants, sandwicheries, brasseries, cafés, friteries, food trucks : fidélisez vos clients sans qu'ils téléchargent d'app. Validez chaque tampon en un clic. 30 jours d'essai gratuit, puis 24,99€/mois.",
+          "Restaurants, cafés, salons, instituts, studios, boutiques, artisans : fidélisez vos clients sans qu'ils téléchargent d'app. Validez chaque tampon en un clic. 30 jours d'essai gratuit, puis 24,99€/mois.",
       },
-      { property: "og:title", content: "Tamply — La carte de fidélité digitale pour l'Horeca" },
+      { property: "og:title", content: "Tamply — La carte de fidélité digitale pour les commerces de proximité" },
       { property: "og:description", content: "Aucune app à télécharger. Validez en un clic. 30 jours gratuits." },
       { property: "og:image", content: "/og-image.jpg" },
       { property: "og:url", content: "https://tamply.app/" },
-      { name: "twitter:title", content: "Tamply — La carte de fidélité digitale pour l'Horeca" },
+      { name: "twitter:title", content: "Tamply — La carte de fidélité digitale pour les commerces de proximité" },
       { name: "twitter:description", content: "Aucune app à télécharger. Validez en un clic. 30 jours gratuits." },
-      { name: "keywords", content: "carte fidélité digitale, fidélisation Horeca, restaurant, café, brasserie, sandwicherie, food truck, QR code, programme fidélité" },
+      { name: "keywords", content: "carte fidélité digitale, programme fidélité, commerce de proximité, restaurant, café, salon de coiffure, institut de beauté, studio sport, boutique, artisan, QR code" },
     ],
     scripts: [
       {
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/")({
           applicationCategory: "BusinessApplication",
           operatingSystem: "Web",
           description:
-            "Carte de fidélité digitale pour les commerces de l'Horeca. Aucune application à télécharger pour les clients.",
+            "Carte de fidélité digitale pour les commerces de proximité. Aucune application à télécharger pour les clients.",
           offers: {
             "@type": "Offer",
             price: "24.99",
@@ -49,7 +49,7 @@ export const Route = createFileRoute("/")({
           name: "Tamply",
           url: "https://tamply.app",
           logo: "https://tamply.app/og-image.jpg",
-          description: "La carte de fidélité digitale pour l'Horeca",
+          description: "La carte de fidélité digitale pour les commerces de proximité",
           areaServed: ["BE", "FR"],
         }),
       },
@@ -133,13 +133,13 @@ function Hero() {
         <div className="mx-auto max-w-3xl text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-4 py-1.5 text-xs font-semibold text-muted-foreground shadow-card">
             <Sparkles className="h-3.5 w-3.5 text-tamply-red" />
-            Pensé pour l'Horeca en Belgique et en France
+            Pensé pour les commerces de proximité en Belgique et en France
           </div>
           <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-foreground md:text-6xl">
             La carte de fidélité digitale pour votre <span className="bg-gradient-to-r from-[#E63946] to-[#FFB800] bg-clip-text text-transparent">établissement</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl">
-            Restaurants, sandwicheries, brasseries, cafés, friteries, food trucks. Vos clients scannent un QR code au comptoir, vous validez en un clic.
+            Restaurants, cafés, salons, instituts, studios, boutiques, artisans. Vos clients scannent un QR code au comptoir, vous validez en un clic.
             Plus de cartes en carton perdues. Plus de clients oubliés.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -277,7 +277,7 @@ function Benefits() {
       <div className="mx-auto max-w-6xl px-4 reveal">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-extrabold md:text-4xl">Tout simplement, ça marche.</h2>
-          <p className="mt-3 text-muted-foreground">Conçu avec et pour les gérants de l'Horeca.</p>
+          <p className="mt-3 text-muted-foreground">Conçu avec et pour les gérants de commerces de proximité.</p>
         </div>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {items.map((it) => (
