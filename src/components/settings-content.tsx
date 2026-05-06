@@ -56,6 +56,7 @@ const PRESET_COLORS = [
 
 export function SettingsContent() {
   const { shop, refresh } = useShop();
+  const { theme, setTheme } = useTheme();
   const [form, setForm] = useState({
     nom: "",
     description_recompense: "",
