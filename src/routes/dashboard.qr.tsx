@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useShop } from "@/lib/use-shop";
 import { Button } from "@/components/ui/button";
-import { Download, ExternalLink, CheckCircle2 } from "lucide-react";
+import { Download, CheckCircle2, Link2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -51,8 +51,8 @@ function QrPage() {
           <QRCodeCanvas value={url} size={260} level="H" includeMargin={false} />
         </div>
         <div className="mt-4 text-sm font-bold">{shop.nom}</div>
-        <a href={url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-          {url} <ExternalLink className="h-3 w-3" />
+        <a href={url} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
+          <Link2 className="h-3 w-3" /> Lien unique de votre établissement
         </a>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Button variant="cta" size="xl" onClick={download}>
