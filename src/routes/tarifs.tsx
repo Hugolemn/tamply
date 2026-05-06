@@ -146,17 +146,17 @@ function Hero() {
 }
 
 function PricingCard() {
-  const features = [
-    "Clients illimités",
-    "QR code unique pour votre établissement",
-    "Validation des tampons en temps réel",
-    "Tableau de bord mobile et desktop",
-    "SMS de récompense automatiques",
-    "Récompense personnalisable (ex : à 10 tampons)",
-    "Aucune app à télécharger pour vos clients",
-    "Conforme RGPD",
-    "Support en français",
-    "Mises à jour incluses",
+  const features: { label: string; soon?: boolean }[] = [
+    { label: "Clients illimités" },
+    { label: "QR code unique pour votre établissement" },
+    { label: "Validation des tampons en temps réel" },
+    { label: "Tableau de bord mobile et desktop" },
+    { label: "SMS de récompense", soon: true },
+    { label: "Récompense personnalisable (ex : à 10 tampons)" },
+    { label: "Aucune app à télécharger pour vos clients" },
+    { label: "Conforme RGPD" },
+    { label: "Support en français" },
+    { label: "Mises à jour incluses" },
   ];
   return (
     <section className="py-16">
@@ -189,11 +189,18 @@ function PricingCard() {
 
           <ul className="mt-6 space-y-3">
             {features.map((f) => (
-              <li key={f} className="flex items-start gap-3 text-sm">
-                <div className="mt-0.5 grid h-5 w-5 place-items-center rounded-full bg-success/15">
-                  <Check className="h-3 w-3 text-success" />
+              <li key={f.label} className={`flex items-start gap-3 text-sm ${f.soon ? "opacity-70" : ""}`}>
+                <div className={`mt-0.5 grid h-5 w-5 place-items-center rounded-full ${f.soon ? "bg-muted" : "bg-success/15"}`}>
+                  <Check className={`h-3 w-3 ${f.soon ? "text-muted-foreground" : "text-success"}`} />
                 </div>
-                <span>{f}</span>
+                <span className="flex flex-wrap items-center gap-2">
+                  <span className={f.soon ? "text-muted-foreground" : ""}>{f.label}</span>
+                  {f.soon && (
+                    <span className="rounded-full border border-border/60 bg-muted px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                      Bientôt 🔜
+                    </span>
+                  )}
+                </span>
               </li>
             ))}
           </ul>
