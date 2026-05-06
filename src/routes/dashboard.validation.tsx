@@ -13,9 +13,9 @@ export const Route = createFileRoute("/dashboard/validation")({
 
 function maskPhone(phone: string): string {
   const digits = (phone ?? "").replace(/\D/g, "");
-  if (digits.length <= 6) return phone;
-  const start = digits.slice(0, 3);
-  const end = digits.slice(-3);
+  if (digits.length <= 8) return phone;
+  const start = digits.slice(0, 4);
+  const end = digits.slice(-4);
   return `${start} ••• ${end}`;
 }
 
