@@ -47,6 +47,26 @@ function ClientFlow() {
   const [submitting, setSubmitting] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const storageKey = `tamply:phone:${shopId}`;
+  const [remembered, setRemembered] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const v = localStorage.getItem(storageKey);
+      if (v) {
+        setRemembered(v);
+        setPhone(v);
+      }
+    } catch {}
+  }, [storageKey]);
+
+  const forgetPhone = () => {
+    try { localStorage.removeItem(storageKey); } catch {}
+    setRemembered(null);
+    setPhone("");
+    setMontant("");
+  };
 
   useEffect(() => {
     (async () => {
@@ -147,12 +167,22 @@ function ClientFlow() {
       .select("id").single();
     setSubmitting(false);
     if (reqErr || !req) return;
+    try { localStorage.setItem(storageKey, cleaned); } catch {}
+    setRemembered(cleaned);
     setCustomer(cust);
     setReqId(req.id);
     setStep("waiting");
   };
 
-  const restart = () => { setStep("phone"); setPhone(""); setMontant(""); setCustomer(null); setReqId(null); };
+  const restart = () => {
+    setStep("phone");
+    setMontant("");
+    setCustomer(null);
+    setReqId(null);
+    // Keep remembered phone pre-filled
+    if (remembered) setPhone(remembered);
+    else setPhone("");
+  };
 
   if (shopErr) {
     return (
@@ -178,6 +208,8 @@ function ClientFlow() {
           phone={phone} setPhone={setPhone}
           montant={montant} setMontant={setMontant}
           submit={submitPhone} submitting={submitting}
+          remembered={remembered}
+          forgetPhone={forgetPhone}
         />
       )}
       {step === "waiting" && <WaitingStep />}
@@ -230,12 +262,14 @@ function Header({ shop }: { shop: Shop }) {
 }
 
 function PhoneStep({
-  shop, phone, setPhone, montant, setMontant, submit, submitting,
+  shop, phone, setPhone, montant, setMontant, submit, submitting, remembered, forgetPhone,
 }: {
   shop: Shop;
   phone: string; setPhone: (v: string) => void;
   montant: string; setMontant: (v: string) => void;
   submit: () => void; submitting: boolean;
+  remembered: string | null;
+  forgetPhone: () => void;
 }) {
   const isPoints = shop.loyalty_mode === "points";
   const montantNum = Number(montant.replace(",", "."));
@@ -244,22 +278,40 @@ function PhoneStep({
   return (
     <form onSubmit={(e) => { e.preventDefault(); if (ok && !submitting) submit(); }} className="mt-10 flex flex-1 flex-col">
       <h2 className="text-center text-2xl font-extrabold">
-        {isPoints ? "Ton numéro et ton montant" : "Entre ton numéro"}
+        {remembered
+          ? (isPoints ? "Bon retour ! Entre ton montant" : "Bon retour !")
+          : (isPoints ? "Ton numéro et ton montant" : "Entre ton numéro")}
       </h2>
       <p className="mt-1 text-center text-sm text-muted-foreground">
-        {isPoints
-          ? "Pas de compte. Pas d'appli. Juste tes points."
-          : "Pas de compte. Pas d'appli. Juste ton tampon."}
+        {remembered
+          ? "On a reconnu ton numéro sur ce téléphone."
+          : (isPoints
+              ? "Pas de compte. Pas d'appli. Juste tes points."
+              : "Pas de compte. Pas d'appli. Juste ton tampon.")}
       </p>
-      <div className="relative mt-8">
-        <Phone className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="tel" inputMode="tel" autoFocus
-          value={phone} onChange={(e) => setPhone(e.target.value)}
-          placeholder="0470 12 34 56"
-          className="h-16 rounded-2xl pl-12 text-xl font-bold shadow-card"
-        />
-      </div>
+      {remembered ? (
+        <div className="mt-8 rounded-2xl border bg-card p-4 shadow-card">
+          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Numéro mémorisé</p>
+          <p className="mt-1 text-xl font-bold">{remembered}</p>
+          <button
+            type="button"
+            onClick={forgetPhone}
+            className="mt-2 text-xs underline text-muted-foreground hover:text-foreground"
+          >
+            Ce n'est pas moi / changer de numéro
+          </button>
+        </div>
+      ) : (
+        <div className="relative mt-8">
+          <Phone className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="tel" inputMode="tel" autoFocus
+            value={phone} onChange={(e) => setPhone(e.target.value)}
+            placeholder="0470 12 34 56"
+            className="h-16 rounded-2xl pl-12 text-xl font-bold shadow-card"
+          />
+        </div>
+      )}
       {isPoints && (
         <div className="mt-4">
           <div className="relative">
@@ -267,6 +319,7 @@ function PhoneStep({
             <Input
               type="text"
               inputMode="decimal"
+              autoFocus={!!remembered}
               value={montant}
               onChange={(e) => setMontant(e.target.value.replace(/[^0-9.,]/g, ""))}
               placeholder="Montant de ton achat"
