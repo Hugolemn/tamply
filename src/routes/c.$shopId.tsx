@@ -47,6 +47,26 @@ function ClientFlow() {
   const [submitting, setSubmitting] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null);
+  const storageKey = `tamply:phone:${shopId}`;
+  const [remembered, setRemembered] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const v = localStorage.getItem(storageKey);
+      if (v) {
+        setRemembered(v);
+        setPhone(v);
+      }
+    } catch {}
+  }, [storageKey]);
+
+  const forgetPhone = () => {
+    try { localStorage.removeItem(storageKey); } catch {}
+    setRemembered(null);
+    setPhone("");
+    setMontant("");
+  };
 
   useEffect(() => {
     (async () => {
@@ -147,12 +167,22 @@ function ClientFlow() {
       .select("id").single();
     setSubmitting(false);
     if (reqErr || !req) return;
+    try { localStorage.setItem(storageKey, cleaned); } catch {}
+    setRemembered(cleaned);
     setCustomer(cust);
     setReqId(req.id);
     setStep("waiting");
   };
 
-  const restart = () => { setStep("phone"); setPhone(""); setMontant(""); setCustomer(null); setReqId(null); };
+  const restart = () => {
+    setStep("phone");
+    setMontant("");
+    setCustomer(null);
+    setReqId(null);
+    // Keep remembered phone pre-filled
+    if (remembered) setPhone(remembered);
+    else setPhone("");
+  };
 
   if (shopErr) {
     return (
@@ -178,6 +208,8 @@ function ClientFlow() {
           phone={phone} setPhone={setPhone}
           montant={montant} setMontant={setMontant}
           submit={submitPhone} submitting={submitting}
+          remembered={remembered}
+          forgetPhone={forgetPhone}
         />
       )}
       {step === "waiting" && <WaitingStep />}
