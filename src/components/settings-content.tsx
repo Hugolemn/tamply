@@ -372,100 +372,13 @@ export function SettingsContent() {
       <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-card space-y-4">
         <h2 className="font-bold">Programme de fidélité</h2>
         <div>
-          <Label className="mb-1.5 block text-sm font-semibold">Type de programme</Label>
-          <p className="mb-3 text-xs text-muted-foreground">
-            Choisissez le système de fidélité qui correspond à votre activité.
-          </p>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={() => setForm({ ...form, loyalty_mode: "tampons" })}
-              className={`rounded-xl border-2 p-4 text-left transition ${
-                form.loyalty_mode === "tampons"
-                  ? "border-primary bg-primary/10"
-                  : "border-border/60 hover:border-border"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">🎟️</span>
-                <span className="font-bold">Tampons</span>
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                1 tampon par visite, peu importe le montant. Idéal pour des achats à prix fixe (café, sandwich…).
-              </p>
-            </button>
-            <button
-              type="button"
-              onClick={() => setForm({ ...form, loyalty_mode: "points" })}
-              className={`rounded-xl border-2 p-4 text-left transition ${
-                form.loyalty_mode === "points"
-                  ? "border-primary bg-primary/10"
-                  : "border-border/60 hover:border-border"
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-2xl">⭐</span>
-                <span className="font-bold">Points par achat</span>
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Le client gagne des points selon son montant d'achat. Idéal pour des paniers variables (restaurant, boutique…).
-              </p>
-            </button>
-          </div>
-        </div>
-        <div>
           <Label className="mb-1.5 block text-sm font-semibold">Récompense</Label>
           <Input value={form.description_recompense} onChange={(e) => setForm({ ...form, description_recompense: e.target.value })} placeholder="Ex : 1 boisson offerte, 1 dessert gratuit, -10%…" className="h-11 rounded-xl" />
         </div>
-        {form.loyalty_mode === "tampons" ? (
-          <div>
-            <Label className="mb-1.5 block text-sm font-semibold">Tampons requis (3 à 50)</Label>
-            <Input type="number" min={3} max={50} value={form.tampons_requis} onChange={(e) => setForm({ ...form, tampons_requis: Number(e.target.value) })} className="h-11 rounded-xl" />
-          </div>
-        ) : (
-          <div className="space-y-4 rounded-xl border border-border/60 bg-muted/20 p-4">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div>
-                <Label className="mb-1.5 block text-sm font-semibold">Tranche d'achat (€)</Label>
-                <Input
-                  type="number"
-                  min={0.5}
-                  step={0.5}
-                  value={form.montant_tranche}
-                  onChange={(e) => setForm({ ...form, montant_tranche: Number(e.target.value) })}
-                  className="h-11 rounded-xl"
-                />
-              </div>
-              <div>
-                <Label className="mb-1.5 block text-sm font-semibold">Points par tranche</Label>
-                <Input
-                  type="number"
-                  min={1}
-                  value={form.points_par_tranche}
-                  onChange={(e) => setForm({ ...form, points_par_tranche: Number(e.target.value) })}
-                  className="h-11 rounded-xl"
-                />
-              </div>
-            </div>
-            <div>
-              <Label className="mb-1.5 block text-sm font-semibold">Points requis pour la récompense</Label>
-              <Input
-                type="number"
-                min={1}
-                value={form.points_requis}
-                onChange={(e) => setForm({ ...form, points_requis: Number(e.target.value) })}
-                className="h-11 rounded-xl"
-              />
-            </div>
-            <p className="rounded-lg bg-background/60 p-3 text-xs text-muted-foreground">
-              💡 Exemple : avec <b>{form.points_par_tranche} pt(s)</b> par tranche de <b>{form.montant_tranche} €</b>,
-              un achat de <b>{(form.montant_tranche * 10).toFixed(2)} €</b> rapporte
-              <b> {form.points_par_tranche * 10} pts</b>. Récompense atteinte au bout de
-              <b> {form.points_requis} pts</b>, soit environ
-              <b> {((form.points_requis / Math.max(1, form.points_par_tranche)) * form.montant_tranche).toFixed(2)} €</b> dépensés.
-            </p>
-          </div>
-        )}
+        <div>
+          <Label className="mb-1.5 block text-sm font-semibold">Tampons requis (3 à 50)</Label>
+          <Input type="number" min={3} max={50} value={form.tampons_requis} onChange={(e) => setForm({ ...form, tampons_requis: Number(e.target.value) })} className="h-11 rounded-xl" />
+        </div>
         <div>
           <Label className="mb-1.5 block text-sm font-semibold">Emoji du tampon</Label>
           <p className="mb-3 text-xs text-muted-foreground">
