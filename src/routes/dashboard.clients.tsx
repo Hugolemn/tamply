@@ -9,6 +9,12 @@ export const Route = createFileRoute("/dashboard/clients")({
   component: Clients,
 });
 
+function maskPhone(phone: string): string {
+  const digits = (phone ?? "").replace(/\D/g, "");
+  if (digits.length <= 8) return phone;
+  return `${digits.slice(0, 4)} ••• ${digits.slice(-4)}`;
+}
+
 interface Customer {
   id: string; numero_telephone: string; total_tampons: number;
   total_points: number; total_recompenses: number;
@@ -56,7 +62,7 @@ function Clients() {
             <tbody>
               {list.map((c) => (
                 <tr key={c.id} className="border-t border-border/60">
-                  <td className="px-4 py-3 font-semibold">{c.numero_telephone}</td>
+                  <td className="px-4 py-3 font-semibold">{maskPhone(c.numero_telephone)}</td>
                   <td className="px-4 py-3 text-center">
                     <span className="rounded-full bg-primary/30 px-2.5 py-1 font-bold">
                       {isPoints ? c.total_points : c.total_tampons}
