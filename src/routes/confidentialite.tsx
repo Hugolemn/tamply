@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import logo from "@/assets/logo.png";
-import { getShopContact } from "@/server/shop-contact.functions";
+
 
 export const Route = createFileRoute("/confidentialite")({
   validateSearch: (search: Record<string, unknown>) =>
@@ -26,9 +26,9 @@ function ConfidentialitePage() {
   useEffect(() => {
     if (!shopId) { setContact(null); return; }
     let cancelled = false;
-    getShopContact({ data: { shopId } })
-      .then((res) => { if (!cancelled) setContact(res); })
-      .catch(() => { if (!cancelled) setContact(null); });
+    supabase.from('shops').select('name, email').eq('id', shopId).single()
+  .then(({ data }) => { if (!cancelled) setContact(data); })
+  .catch(() => { if (!cancelled) setContact(null); });
     return () => { cancelled = true; };
   }, [shopId]);
 
